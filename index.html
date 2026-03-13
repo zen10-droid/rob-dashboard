@@ -16,7 +16,10 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{font-size:15px;scroll-behavior:smooth;}
 body{font-family:'Montserrat',sans-serif;background:var(--black);color:var(--text);min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260px;pointer-events:none;z-index:0;background:radial-gradient(ellipse,rgba(212,175,106,0.07) 0%,transparent 70%);}
+body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260px;pointer-events:none;z-index:1;background:radial-gradient(ellipse,rgba(212,175,106,0.07) 0%,transparent 70%);}
+
+/* Weather Canvas */
+#weatherCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 
 /* ── TOPBAR ── */
 .topbar{position:sticky;top:0;z-index:500;background:rgba(12,12,12,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border2);padding:0 18px;display:flex;align-items:center;justify-content:space-between;height:54px;}
@@ -24,6 +27,8 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
 .brand em{font-style:italic;color:var(--gold);}
 .topbar-right{display:flex;align-items:center;gap:14px;}
 #clockEl{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;letter-spacing:1px;}
+#weatherTopbar{display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);}
+#weatherTopbar .wtop-icon{font-size:16px;}
 .live-row{display:flex;align-items:center;gap:5px;}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 7px var(--success);animation:pulse 2.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
@@ -36,7 +41,7 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
 .nav-tab:hover:not(.active){color:var(--text2);}
 
 /* ── PAGE ── */
-.page{max-width:680px;margin:0 auto;padding:20px 16px 80px;position:relative;z-index:1;}
+.page{max-width:680px;margin:0 auto;padding:20px 16px 80px;position:relative;z-index:2;}
 .tab-content{display:none;}
 .tab-content.active{display:block;}
 
@@ -60,6 +65,26 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
 .hero-title em{font-style:italic;color:var(--gold);}
 .hero-sub{font-size:11px;color:var(--text3);margin-top:8px;letter-spacing:.3px;}
 .hero-rule{height:1px;margin-top:18px;background:linear-gradient(90deg,var(--gold-line),transparent);}
+
+/* ── WEATHER CARD ── */
+.weather-card{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:16px 18px;margin-bottom:20px;position:relative;overflow:hidden;}
+.weather-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),transparent);}
+.weather-main{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.weather-left{display:flex;align-items:center;gap:12px;}
+.weather-icon-big{font-size:36px;line-height:1;}
+.weather-temps{display:flex;flex-direction:column;}
+.weather-temp{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;line-height:1;}
+.weather-feels{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px;}
+.weather-right{text-align:right;}
+.weather-city{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--text2);}
+.weather-wind{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:3px;}
+.weather-desc{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-top:2px;}
+.hourly-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-top:10px;border-top:1px solid var(--border);}
+.hourly-row::-webkit-scrollbar{display:none;}
+.hourly-item{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0;min-width:44px;padding:6px 4px;border-radius:8px;background:var(--surface2);}
+.hourly-time{font-family:'DM Mono',monospace;font-size:8px;color:var(--text3);}
+.hourly-icon{font-size:14px;}
+.hourly-temp{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--text);}
 
 /* ── STATS ── */
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:20px;}
@@ -142,6 +167,10 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
 .ev-del{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0 3px;transition:color .2s;flex-shrink:0;align-self:center;}
 .ev-del:hover{color:var(--danger);}
 .ev-empty{font-size:11px;color:var(--text3);font-style:italic;padding:8px 0;}
+/* GCal sync button */
+.ev-gcal-btn{background:none;border:none;cursor:pointer;font-size:13px;padding:0 3px;flex-shrink:0;align-self:center;opacity:0.6;transition:opacity .2s;}
+.ev-gcal-btn:hover{opacity:1;}
+.ev-gcal-btn.synced{opacity:1;cursor:default;}
 
 /* ── HABITS ── */
 .habit-list{display:flex;flex-direction:column;gap:8px;}
@@ -240,11 +269,21 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
 .btn-secondary{padding:13px 18px;background:transparent;border:1px solid var(--border2);border-radius:10px;color:var(--text3);font-family:'Montserrat',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
 .btn-secondary:hover{border-color:var(--text3);color:var(--text);}
 .modal-close{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;padding:4px;}
+/* GCal setup info box */
+.gcal-info{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:14px;margin-bottom:14px;font-size:12px;color:var(--text3);line-height:1.7;}
+.gcal-info strong{color:var(--text2);}
+.gcal-info ol{padding-left:16px;margin-top:6px;}
+.gcal-info li{margin-bottom:4px;}
 
 /* ── QUOTE ── */
 .quote-card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:18px;margin-bottom:20px;}
 .quote-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--text2);line-height:1.5;font-weight:300;}
 .quote-author{font-family:'DM Mono',monospace;font-size:8px;color:var(--text3);margin-top:8px;letter-spacing:1px;text-transform:uppercase;}
+
+/* ── SCHEDULE HEADER BUTTONS ── */
+.sec-head-btns{display:flex;align-items:center;gap:8px;}
+#gcalBtn{font-size:11px;padding:7px 12px;}
+#gcalBtn.connected{background:rgba(93,191,128,.15);border-color:var(--success);color:var(--success);}
 
 /* ── ANIMATIONS ── */
 @keyframes slideIn{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:none}}
@@ -268,10 +307,17 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
 </head>
 <body>
 
+<!-- Weather Canvas (behind everything) -->
+<canvas id="weatherCanvas"></canvas>
+
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="brand">Rob's <em>Command Center</em></div>
   <div class="topbar-right">
+    <div id="weatherTopbar" style="display:none;">
+      <span class="wtop-icon" id="wtopIcon"></span>
+      <span id="wtopTemp"></span>
+    </div>
     <div id="clockEl">&#x2013;</div>
     <div class="live-row"><div class="live-dot"></div></div>
   </div>
@@ -298,6 +344,25 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
     <div class="hero-title" id="heroTitle">Good <em>Morning,</em><br>Rob.</div>
     <div class="hero-sub" id="heroSub">&#x2013;</div>
     <div class="hero-rule"></div>
+  </div>
+
+  <!-- Weather Card -->
+  <div class="weather-card" id="weatherCard" style="display:none;">
+    <div class="weather-main">
+      <div class="weather-left">
+        <div class="weather-icon-big" id="wIconBig"></div>
+        <div class="weather-temps">
+          <div class="weather-temp" id="wTemp">--</div>
+          <div class="weather-feels" id="wFeels">Feels like --</div>
+        </div>
+      </div>
+      <div class="weather-right">
+        <div class="weather-city" id="wCity">--</div>
+        <div class="weather-wind" id="wWind">Wind -- mph</div>
+        <div class="weather-desc" id="wDesc">--</div>
+      </div>
+    </div>
+    <div class="hourly-row" id="wHourly"></div>
   </div>
 
   <div class="stat-grid">
@@ -335,7 +400,11 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
 <div class="tab-content" id="tab-schedule">
   <div class="sec-head">
     <div class="sec-title">Weekly <em>Schedule</em></div>
-    <button class="add-btn" onclick="openEventModal()">+ Event</button>
+    <div class="sec-head-btns">
+      <button class="add-btn-ghost" id="gcalPullBtn" onclick="gcalPull()" style="font-size:10px;padding:6px 10px;display:none;">&#8595; Pull</button>
+      <button class="add-btn-ghost" id="gcalBtn" onclick="gcalConnect()">&#128197; Connect Google Calendar</button>
+      <button class="add-btn" onclick="openEventModal()">+ Event</button>
+    </div>
   </div>
   <div class="week-stack" id="weekStack"></div>
 </div>
@@ -613,6 +682,33 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
   </div>
 </div>
 
+<!-- Google Calendar Setup Modal -->
+<div class="modal-overlay" id="gcalModal">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModal('gcalModal')">&times;</button>
+    <div class="modal-title">&#128197; Google <em>Calendar</em></div>
+    <div class="gcal-info">
+      <strong>5-step setup to connect Google Calendar:</strong>
+      <ol>
+        <li>Go to <strong>console.cloud.google.com</strong> and create/select a project.</li>
+        <li>Enable the <strong>Google Calendar API</strong> in APIs &amp; Services.</li>
+        <li>Go to <strong>OAuth consent screen</strong> — set to External, add yourself as test user.</li>
+        <li>Create <strong>OAuth 2.0 credentials</strong> (Web application type).</li>
+        <li>Under <strong>Authorized JavaScript origins</strong>, add this page's origin: <strong id="gcalOriginHint"></strong></li>
+      </ol>
+      <div style="margin-top:8px;font-size:11px;">Then paste your Client ID below and click Connect.</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">OAuth Client ID</label>
+      <input class="form-input" id="gcalClientIdInput" placeholder="xxxxxxxxxx.apps.googleusercontent.com">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal('gcalModal')">Cancel</button>
+      <button class="btn-primary" onclick="gcalDoConnect()">Connect</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ─────────────────────────────────────
 //  STATE
@@ -677,7 +773,8 @@ function seed(){return{
     {id:1,name:'Williams Systems',desc:'SaaS for independent car rental owners. Priority: close first paying customer via cold outreach.',color:'gold',tags:['SaaS','Cold Outreach','High Priority']},
     {id:2,name:'Cinema.Rob',desc:'UGC creator brand. Building portfolio for brand partnerships. Instagram: @Cinema.Rob',color:'blue',tags:['UGC','Content','Instagram']},
     {id:3,name:'Dream World Defender',desc:'Roblox tower defense game. Map currently in progress.',color:'orange',tags:['Roblox','Game Dev']},
-  ]
+  ],
+  gcalClientId: null,
 };}
 
 let S=loadState();
@@ -727,7 +824,7 @@ function switchTab(name){
 // ─────────────────────────────────────
 //  RENDER ALL
 // ─────────────────────────────────────
-function render(){renderStats();renderFocus();renderHome();renderWeek();renderTasks();renderIncome();renderProjects();renderPipeline();renderHabits();renderLog();renderNotes();renderQuote();}
+function render(){renderStats();renderFocus();renderHome();renderWeek();renderTasks();renderIncome();renderProjects();renderPipeline();renderHabits();renderLog();renderNotes();renderQuote();updateGcalBtn();}
 
 function renderStats(){
   document.getElementById('statTotal').textContent=S.tasks.length;
@@ -812,13 +909,18 @@ function renderWeek(){
     const evts=(S.schedule[k]||[]).sort((a,b)=>a.time.localeCompare(b.time));
     const count=evts.length;
     const prevHTML=evts.length?evts.slice(0,2).map(e=>`<div class="preview-pill"><div class="pdot ${e.type}"></div><span>${esc(e.time)} — ${esc(e.title)}</span></div>`).join(''):`<div style="font-size:10px;color:var(--text3);font-style:italic;">Nothing scheduled</div>`;
-    const evHTML=evts.length?evts.map(e=>`
+    const evHTML=evts.length?evts.map(e=>{
+      const synced=e.gcalId?true:false;
+      const gcalBtnHTML=gcalToken?`<button class="ev-gcal-btn${synced?' synced':''}" onclick="syncEventToGcal('${k}',${e.id})" title="${synced?'Synced to Google Calendar':'Push to Google Calendar'}">${synced?'✓':'📅'}</button>`:'';
+      return `
       <div class="ev-item ${e.type}">
         <div class="ev-time">${esc(e.time)}</div>
         <div class="ev-body"><div class="ev-title">${esc(e.title)}</div>${e.note?`<div class="ev-note">${esc(e.note)}</div>`:''}</div>
         <div class="ev-tag ${e.type}">${e.type}</div>
+        ${gcalBtnHTML}
         <button class="ev-del" onclick="deleteEvent('${k}',${e.id})">✕</button>
-      </div>`).join(''):`<div class="ev-empty">Nothing scheduled</div>`;
+      </div>`;
+    }).join(''):`<div class="ev-empty">Nothing scheduled</div>`;
     const card=document.createElement('div');
     card.className=`day-card${isT?' today':''}`;card.id=`day-${k}`;
     card.innerHTML=`
@@ -1132,11 +1234,459 @@ document.addEventListener('keydown',e=>{
 });
 
 // ─────────────────────────────────────
+//  WEATHER
+// ─────────────────────────────────────
+const WMO_MAP={
+  0:{label:'Clear',icon:'☀️',type:'clear'},
+  1:{label:'Mainly Clear',icon:'🌤️',type:'clear'},
+  2:{label:'Partly Cloudy',icon:'⛅',type:'cloudy'},
+  3:{label:'Overcast',icon:'☁️',type:'overcast'},
+  45:{label:'Fog',icon:'🌫️',type:'fog'},
+  48:{label:'Icy Fog',icon:'🌫️',type:'fog'},
+  51:{label:'Drizzle',icon:'🌦️',type:'rain'},
+  53:{label:'Drizzle',icon:'🌦️',type:'rain'},
+  55:{label:'Heavy Drizzle',icon:'🌧️',type:'rain'},
+  61:{label:'Light Rain',icon:'🌧️',type:'rain'},
+  63:{label:'Rain',icon:'🌧️',type:'rain'},
+  65:{label:'Heavy Rain',icon:'🌧️',type:'rain'},
+  66:{label:'Freezing Rain',icon:'🌨️',type:'rain'},
+  67:{label:'Heavy Freezing Rain',icon:'🌨️',type:'rain'},
+  71:{label:'Light Snow',icon:'🌨️',type:'snow'},
+  73:{label:'Snow',icon:'❄️',type:'snow'},
+  75:{label:'Heavy Snow',icon:'❄️',type:'snow'},
+  77:{label:'Snow Grains',icon:'❄️',type:'snow'},
+  80:{label:'Showers',icon:'🌦️',type:'rain'},
+  81:{label:'Showers',icon:'🌧️',type:'rain'},
+  82:{label:'Heavy Showers',icon:'🌧️',type:'rain'},
+  85:{label:'Snow Showers',icon:'🌨️',type:'snow'},
+  86:{label:'Heavy Snow Showers',icon:'❄️',type:'snow'},
+  95:{label:'Thunderstorm',icon:'⛈️',type:'thunder'},
+  96:{label:'Thunderstorm',icon:'⛈️',type:'thunder'},
+  99:{label:'Thunderstorm',icon:'⛈️',type:'thunder'},
+};
+
+function wmoInfo(code){
+  return WMO_MAP[code]||{label:'Unknown',icon:'🌡️',type:'cloudy'};
+}
+
+let weatherData=null;
+
+function fetchWeather(){
+  if(!navigator.geolocation)return;
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const {latitude:lat,longitude:lon}=pos.coords;
+    try{
+      const [meteoRes,geoRes]=await Promise.all([
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode,windspeed_10m,apparent_temperature&hourly=temperature_2m,weathercode&timezone=auto&forecast_days=1&temperature_unit=fahrenheit`),
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+      ]);
+      const meteo=await meteoRes.json();
+      const geo=await geoRes.json();
+      const city=geo.address?.city||geo.address?.town||geo.address?.village||geo.address?.county||'Unknown';
+      weatherData={
+        temp:Math.round(meteo.current.temperature_2m),
+        feels:Math.round(meteo.current.apparent_temperature),
+        wind:Math.round(meteo.current.windspeed_10m),
+        code:meteo.current.weathercode,
+        city,
+        hourly:meteo.hourly,
+      };
+      applyWeather();
+    }catch(err){console.warn('Weather fetch failed',err);}
+  },()=>{/* denied - silent */},{timeout:8000});
+}
+
+function applyWeather(){
+  if(!weatherData)return;
+  const {temp,feels,wind,code,city,hourly}=weatherData;
+  const info=wmoInfo(code);
+  const h=new Date().getHours();
+  const isNight=h<6||h>=20;
+  const effectiveType=isNight&&info.type==='clear'?'night':info.type;
+
+  // Topbar
+  const topEl=document.getElementById('weatherTopbar');
+  document.getElementById('wtopIcon').textContent=isNight&&info.type==='clear'?'🌙':info.icon;
+  document.getElementById('wtopTemp').textContent=`${temp}°F`;
+  topEl.style.display='flex';
+
+  // Home card
+  document.getElementById('wIconBig').textContent=isNight&&info.type==='clear'?'🌙':info.icon;
+  document.getElementById('wTemp').textContent=`${temp}°F`;
+  document.getElementById('wFeels').textContent=`Feels like ${feels}°F`;
+  document.getElementById('wCity').textContent=city;
+  document.getElementById('wWind').textContent=`Wind ${wind} mph`;
+  document.getElementById('wDesc').textContent=info.label;
+  document.getElementById('weatherCard').style.display='block';
+
+  // Hourly forecast (next 6 hours)
+  const nowHour=new Date().getHours();
+  const times=hourly.time;
+  const temps=hourly.temperature_2m;
+  const codes=hourly.weathercode;
+  const hourlyEl=document.getElementById('wHourly');
+  let items='';
+  let count=0;
+  for(let i=0;i<times.length&&count<6;i++){
+    const t=new Date(times[i]);
+    if(t.getHours()>=nowHour&&t.getDate()===new Date().getDate()){
+      const hi=wmoInfo(codes[i]);
+      const isN=t.getHours()<6||t.getHours()>=20;
+      items+=`<div class="hourly-item">
+        <div class="hourly-time">${fmt12(t.getHours(),0).replace(':00','')}</div>
+        <div class="hourly-icon">${isN&&hi.type==='clear'?'🌙':hi.icon}</div>
+        <div class="hourly-temp">${Math.round(temps[i])}°</div>
+      </div>`;
+      count++;
+    }
+  }
+  hourlyEl.innerHTML=items;
+
+  // CSS variable tweaks
+  const root=document.documentElement;
+  if(effectiveType==='clear'){
+    root.style.setProperty('--black','#0E0B06');
+    root.style.setProperty('--surface','#1A1610');
+  } else if(effectiveType==='night'){
+    root.style.setProperty('--black','#050810');
+    root.style.setProperty('--surface','#0D1020');
+  } else if(effectiveType==='rain'){
+    root.style.setProperty('--black','#060A10');
+    root.style.setProperty('--surface','#101520');
+  } else if(effectiveType==='snow'){
+    root.style.setProperty('--black','#060A0F');
+    root.style.setProperty('--surface','#0C1220');
+  } else if(effectiveType==='thunder'){
+    root.style.setProperty('--black','#080608');
+    root.style.setProperty('--surface','#110D14');
+  } else if(effectiveType==='fog'){
+    root.style.setProperty('--black','#080808');
+    root.style.setProperty('--surface','#141414');
+  } else {
+    root.style.setProperty('--black','#0A0C10');
+    root.style.setProperty('--surface','#151820');
+  }
+
+  // Start canvas
+  startWeatherCanvas(effectiveType);
+}
+
+// ─────────────────────────────────────
+//  WEATHER CANVAS
+// ─────────────────────────────────────
+let canvasAnim=null;
+function startWeatherCanvas(type){
+  const canvas=document.getElementById('weatherCanvas');
+  const ctx=canvas.getContext('2d');
+  if(canvasAnim){cancelAnimationFrame(canvasAnim);canvasAnim=null;}
+
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+
+  if(type==='clear'){
+    // Golden dust particles + warm top-right glow
+    const particles=Array.from({length:80},()=>({
+      x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+      r:Math.random()*2+0.5,vx:(Math.random()-.5)*0.3,vy:(Math.random()-.5)*0.2,
+      a:Math.random()*0.6+0.1
+    }));
+    function frame(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      // Glow
+      const g=ctx.createRadialGradient(canvas.width*.85,canvas.height*.05,0,canvas.width*.85,canvas.height*.05,canvas.width*.45);
+      g.addColorStop(0,'rgba(255,210,100,0.09)');g.addColorStop(1,'rgba(255,210,100,0)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);
+      particles.forEach(p=>{
+        p.x+=p.vx;p.y+=p.vy;
+        if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+        if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(212,175,106,${p.a})`;ctx.fill();
+      });
+      canvasAnim=requestAnimationFrame(frame);
+    }
+    frame();
+  } else if(type==='rain'){
+    const drops=Array.from({length:140},()=>({
+      x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+      len:Math.random()*14+8,speed:Math.random()*5+8,a:Math.random()*0.3+0.1
+    }));
+    function frame(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.strokeStyle='rgba(120,150,180,0.22)';ctx.lineWidth=1;
+      drops.forEach(d=>{
+        ctx.globalAlpha=d.a;
+        ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-d.len*0.18,d.y+d.len);ctx.stroke();
+        d.y+=d.speed;d.x-=d.speed*0.18;
+        if(d.y>canvas.height){d.y=-d.len;d.x=Math.random()*canvas.width;}
+        if(d.x<-20){d.x=canvas.width+20;}
+      });
+      ctx.globalAlpha=1;
+      canvasAnim=requestAnimationFrame(frame);
+    }
+    frame();
+  } else if(type==='snow'){
+    const flakes=Array.from({length:100},()=>({
+      x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+      r:Math.random()*3+1.5,vy:Math.random()*1.2+0.4,vx:(Math.random()-.5)*0.5,
+      a:Math.random()*0.5+0.2,drift:Math.random()*Math.PI*2
+    }));
+    let t=0;
+    function frame(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      t+=0.01;
+      flakes.forEach(f=>{
+        f.y+=f.vy;f.x+=f.vx+Math.sin(t+f.drift)*0.3;
+        if(f.y>canvas.height){f.y=-f.r*2;f.x=Math.random()*canvas.width;}
+        if(f.x<-10)f.x=canvas.width+10;if(f.x>canvas.width+10)f.x=-10;
+        ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(200,220,255,${f.a})`;ctx.fill();
+      });
+      canvasAnim=requestAnimationFrame(frame);
+    }
+    frame();
+  } else if(type==='thunder'){
+    const drops=Array.from({length:200},()=>({
+      x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+      len:Math.random()*18+10,speed:Math.random()*8+12,a:Math.random()*0.35+0.1
+    }));
+    let flashAlpha=0,flashTimer=0,nextFlash=Math.random()*200+100;
+    function frame(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      // Rain
+      ctx.strokeStyle='rgba(100,120,150,0.2)';ctx.lineWidth=1;
+      drops.forEach(d=>{
+        ctx.globalAlpha=d.a;
+        ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-d.len*0.2,d.y+d.len);ctx.stroke();
+        d.y+=d.speed;d.x-=d.speed*0.2;
+        if(d.y>canvas.height){d.y=-d.len;d.x=Math.random()*canvas.width;}
+        if(d.x<-20){d.x=canvas.width+20;}
+      });
+      ctx.globalAlpha=1;
+      // Lightning flash
+      flashTimer++;
+      if(flashTimer>=nextFlash){flashAlpha=0.18;nextFlash=Math.random()*300+150;flashTimer=0;}
+      if(flashAlpha>0){
+        ctx.fillStyle=`rgba(255,255,255,${flashAlpha})`;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        flashAlpha=Math.max(0,flashAlpha-0.015);
+      }
+      canvasAnim=requestAnimationFrame(frame);
+    }
+    frame();
+  } else if(type==='fog'){
+    const blobs=Array.from({length:8},()=>({
+      x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+      rx:Math.random()*300+150,ry:Math.random()*120+60,
+      vx:(Math.random()-.5)*0.15,vy:(Math.random()-.5)*0.1,a:Math.random()*0.04+0.01
+    }));
+    function frame(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      blobs.forEach(b=>{
+        b.x+=b.vx;b.y+=b.vy;
+        if(b.x<-b.rx)b.x=canvas.width+b.rx;if(b.x>canvas.width+b.rx)b.x=-b.rx;
+        if(b.y<-b.ry)b.y=canvas.height+b.ry;if(b.y>canvas.height+b.ry)b.y=-b.ry;
+        const g=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,Math.max(b.rx,b.ry));
+        g.addColorStop(0,`rgba(180,180,190,${b.a})`);g.addColorStop(1,'rgba(180,180,190,0)');
+        ctx.save();ctx.scale(1,b.ry/b.rx);
+        ctx.fillStyle=g;ctx.beginPath();ctx.arc(b.x,b.y*b.rx/b.ry,b.rx,0,Math.PI*2);ctx.fill();
+        ctx.restore();
+      });
+      canvasAnim=requestAnimationFrame(frame);
+    }
+    frame();
+  } else if(type==='overcast'){
+    const blobs=Array.from({length:6},()=>({
+      x:Math.random()*canvas.width,y:Math.random()*canvas.height*0.4,
+      rx:Math.random()*400+200,ry:Math.random()*80+40,
+      vx:(Math.random()-.5)*0.1,a:Math.random()*0.03+0.01
+    }));
+    function frame(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      blobs.forEach(b=>{
+        b.x+=b.vx;
+        if(b.x<-b.rx)b.x=canvas.width+b.rx;if(b.x>canvas.width+b.rx)b.x=-b.rx;
+        const g=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.rx);
+        g.addColorStop(0,`rgba(80,85,95,${b.a})`);g.addColorStop(1,'rgba(80,85,95,0)');
+        ctx.fillStyle=g;ctx.fillRect(0,0,canvas.width,canvas.height);
+      });
+      canvasAnim=requestAnimationFrame(frame);
+    }
+    frame();
+  } else if(type==='night'){
+    // Twinkling stars
+    const stars=Array.from({length:120},()=>({
+      x:Math.random()*canvas.width,y:Math.random()*canvas.height*0.7,
+      r:Math.random()*1.5+0.3,a:Math.random(),da:(Math.random()*0.02+0.005)*(Math.random()<.5?1:-1),
+    }));
+    function frame(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      stars.forEach(s=>{
+        s.a+=s.da;if(s.a>0.9||s.a<0.05)s.da=-s.da;
+        ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(200,215,255,${s.a})`;ctx.fill();
+      });
+      canvasAnim=requestAnimationFrame(frame);
+    }
+    frame();
+  }
+}
+
+// ─────────────────────────────────────
+//  GOOGLE CALENDAR
+// ─────────────────────────────────────
+let gcalToken=null; // in-memory only
+
+function updateGcalBtn(){
+  const btn=document.getElementById('gcalBtn');
+  const pullBtn=document.getElementById('gcalPullBtn');
+  if(!btn)return;
+  if(gcalToken){
+    btn.textContent='✓ Connected';btn.classList.add('connected');
+    if(pullBtn)pullBtn.style.display='inline-flex';
+  } else {
+    btn.textContent='📅 Connect Google Calendar';btn.classList.remove('connected');
+    if(pullBtn)pullBtn.style.display='none';
+  }
+}
+
+function gcalConnect(){
+  if(gcalToken){return;} // already connected
+  if(!S.gcalClientId){
+    // Show setup modal
+    const originHint=document.getElementById('gcalOriginHint');
+    if(originHint)originHint.textContent=window.location.origin||window.location.href.split('/').slice(0,3).join('/');
+    document.getElementById('gcalClientIdInput').value=S.gcalClientId||'';
+    openModal('gcalModal');
+  } else {
+    gcalLaunchOAuth();
+  }
+}
+
+function gcalDoConnect(){
+  const clientId=document.getElementById('gcalClientIdInput').value.trim();
+  if(!clientId){alert('Please enter your OAuth Client ID.');return;}
+  S.gcalClientId=clientId;save();
+  closeModal('gcalModal');
+  gcalLaunchOAuth();
+}
+
+function gcalLaunchOAuth(){
+  if(!S.gcalClientId)return;
+  const script=document.createElement('script');
+  script.src='https://accounts.google.com/gsi/client';
+  script.onload=()=>{
+    google.accounts.oauth2.initTokenClient({
+      client_id:S.gcalClientId,
+      scope:'https://www.googleapis.com/auth/calendar.events',
+      callback:(resp)=>{
+        if(resp.access_token){
+          gcalToken=resp.access_token;
+          addLog('Connected','Google Calendar connected','add');
+          save();render();
+        } else {
+          alert('Google Calendar auth failed: '+(resp.error||'unknown error'));
+        }
+      }
+    }).requestAccessToken();
+  };
+  script.onerror=()=>alert('Could not load Google Sign-In library. Check your internet connection.');
+  document.head.appendChild(script);
+}
+
+function parseEventDateTime(year,month,day,timeStr){
+  if(!timeStr||timeStr==='TBD'){
+    return new Date(year,month-1,day,9,0,0).toISOString();
+  }
+  const m=timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if(!m)return new Date(year,month-1,day,9,0,0).toISOString();
+  let h=parseInt(m[1]),min=parseInt(m[2]),ap=m[3].toUpperCase();
+  if(ap==='PM'&&h!==12)h+=12;
+  if(ap==='AM'&&h===12)h=0;
+  return new Date(year,month-1,day,h,min,0).toISOString();
+}
+
+async function syncEventToGcal(dateKey,eventId){
+  if(!gcalToken){alert('Connect Google Calendar first.');return;}
+  const dayEvts=S.schedule[dateKey];
+  if(!dayEvts)return;
+  const ev=dayEvts.find(e=>e.id==eventId);
+  if(!ev)return;
+  if(ev.gcalId){return;} // already synced
+
+  // Parse date from key
+  const [yr,mo,dy]=dateKey.split('-').map(Number);
+  const startISO=parseEventDateTime(yr,mo,dy,ev.time);
+  const startDt=new Date(startISO);
+  const endDt=new Date(startDt.getTime()+60*60*1000); // +1hr default
+
+  const body={
+    summary:ev.title,
+    description:ev.note||'',
+    start:{dateTime:startISO,timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone},
+    end:{dateTime:endDt.toISOString(),timeZone:Intl.DateTimeFormat().resolvedOptions().timeZone},
+    reminders:{useDefault:false,overrides:[{method:'popup',minutes:30}]}
+  };
+
+  try{
+    const res=await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+gcalToken,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    const data=await res.json();
+    if(data.id){
+      S.schedule[dateKey]=S.schedule[dateKey].map(e=>e.id==eventId?{...e,gcalId:data.id}:e);
+      addLog('Synced',`"${ev.title}" pushed to Google Calendar`,'add');
+      save();renderWeek();
+    } else {
+      alert('Failed to sync: '+(data.error?.message||'unknown error'));
+    }
+  }catch(err){alert('Sync error: '+err.message);}
+}
+
+async function gcalPull(){
+  if(!gcalToken){alert('Connect Google Calendar first.');return;}
+  const week=getWeekDates();
+  const timeMin=new Date(week[0]);timeMin.setHours(0,0,0,0);
+  const timeMax=new Date(week[6]);timeMax.setHours(23,59,59,999);
+
+  try{
+    const res=await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${timeMin.toISOString()}&timeMax=${timeMax.toISOString()}&singleEvents=true&maxResults=50`,{
+      headers:{'Authorization':'Bearer '+gcalToken}
+    });
+    const data=await res.json();
+    if(!data.items){alert('Failed to pull events.');return;}
+    let added=0;
+    data.items.forEach(item=>{
+      if(!item.start)return;
+      const start=item.start.dateTime||item.start.date;
+      const d=new Date(start);
+      const k=dateKey(d);
+      if(!S.schedule[k])S.schedule[k]=[];
+      // Check duplicate by gcalId
+      const exists=S.schedule[k].some(e=>e.gcalId===item.id);
+      if(!exists){
+        const h=d.getHours(),m=d.getMinutes();
+        const timeStr=item.start.dateTime?fmt12(h,m):'All Day';
+        S.schedule[k].push({id:Date.now()+Math.random(),time:timeStr,title:item.summary||'(no title)',type:'work',note:item.description||'',gcalId:item.id});
+        added++;
+      }
+    });
+    addLog('Pulled',`${added} new event(s) from Google Calendar`,'add');
+    save();render();
+    if(added===0)alert('No new events to pull this week.');
+  }catch(err){alert('Pull error: '+err.message);}
+}
+
+// ─────────────────────────────────────
 //  BOOT
 // ─────────────────────────────────────
 getWeekDates().forEach(d=>{const k=dateKey(d);if(!S.schedule[k])S.schedule[k]=[];});
 save();
 render();
+fetchWeather();
 </script>
 </body>
 </html>
