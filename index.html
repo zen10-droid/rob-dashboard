@@ -712,11 +712,11 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Emoji Icon</label>
-        <input class="form-input" id="habitIconInput" placeholder="&#129347;" maxlength="2">
+        <input class="form-input" id="habitIconInput" placeholder="&#129347;" maxlength="2" autocomplete="off">
       </div>
       <div class="form-group">
         <label class="form-label">Habit Name</label>
-        <input class="form-input" id="habitNameInput" placeholder="e.g. Drink water">
+        <input class="form-input" id="habitNameInput" placeholder="e.g. Drink water" autocomplete="off">
       </div>
     </div>
     <div class="modal-actions">
@@ -1011,12 +1011,23 @@ function renderWeek(){
   const dsel=document.getElementById('eventDayInput');
   if(dsel){dsel.innerHTML=week.map(d=>{const k=dateKey(d);return `<option value="${k}">${DAYS_F[d.getDay()]} ${MONTHS_S[d.getMonth()]} ${d.getDate()}</option>`;}).join('');}
 
+  const dailyTasks=(S.tasks||[]).filter(t=>t.daily&&!t.done);
   week.forEach(d=>{
     const k=dateKey(d),isT=d.getTime()===today.getTime();
     const evts=(S.schedule[k]||[]).sort((a,b)=>a.time.localeCompare(b.time));
-    const count=evts.length;
-    const prevHTML=evts.length?evts.slice(0,2).map(e=>`<div class="preview-pill"><div class="pdot ${e.type}"></div><span>${esc(e.time)} — ${esc(e.title)}</span></div>`).join(''):`<div style="font-size:10px;color:var(--text3);font-style:italic;">Nothing scheduled</div>`;
-    const evHTML=evts.length?evts.map(e=>{
+    // Inject recurring daily tasks as virtual events
+    const virtualEvts=dailyTasks.map(t=>({id:`daily-${t.id}`,time:'Daily',title:t.text,type:'personal',virtual:true}));
+    const allEvts=[...evts,...virtualEvts];
+    const count=evts.length; // badge shows real events only
+    const prevHTML=allEvts.length?allEvts.slice(0,2).map(e=>`<div class="preview-pill"><div class="pdot ${e.type}"></div><span>${e.virtual?'↻':esc(e.time)} — ${esc(e.title)}</span></div>`).join(''):`<div style="font-size:10px;color:var(--text3);font-style:italic;">Nothing scheduled</div>`;
+    const evHTML=allEvts.length?allEvts.map(e=>{
+      if(e.virtual){
+        return `<div class="ev-item ${e.type}" style="opacity:0.7;">
+          <div class="ev-time" style="color:var(--gold);">↻</div>
+          <div class="ev-body"><div class="ev-title">${esc(e.title)}</div></div>
+          <div class="ev-tag ${e.type}">daily</div>
+        </div>`;
+      }
       const synced=e.gcalId?true:false;
       const gcalBtnHTML=gcalToken?`<button class="ev-gcal-btn${synced?' synced':''}" onclick="syncEventToGcal('${k}',${e.id})" title="${synced?'Synced to Google Calendar':'Push to Google Calendar'}">${synced?'✓':'📅'}</button>`:'';
       return `
@@ -1320,14 +1331,14 @@ function openIncomeModal(key,label,current){
   document.getElementById('incomeAmountInput').value=current||0;
   openModal('incomeModal');
 }
-async function saveIncome(){
+function saveIncome(){
   const key=document.getElementById('incomeKeyInput').value;
   const amount=parseFloat(document.getElementById('incomeAmountInput').value)||0;
   const today=dateKey(new Date());
   todayIncome[key]=amount;
-  await sb.from('dash_income_history').upsert({date:today,source:key,amount});
   addLog('Updated',`Income: ${key} = $${amount}`,'update');
   save();renderIncome();closeModal('incomeModal');
+  sb.from('dash_income_history').upsert({date:today,source:key,amount}).catch(()=>{});
 }
 
 // ─────────────────────────────────────
@@ -1381,14 +1392,14 @@ function updatePipelineStage(id,stage){
 // ─────────────────────────────────────
 //  HABITS
 // ─────────────────────────────────────
-async function toggleHabit(hid,dateStr){
+function toggleHabit(hid,dateStr){
   const key=`${hid}|${dateStr}`;
   if(habitCompletionSet.has(key)){
     habitCompletionSet.delete(key);
-    await sb.from('dash_habit_completions').delete().eq('habit_id',hid).eq('date',dateStr);
+    sb.from('dash_habit_completions').delete().eq('habit_id',hid).eq('date',dateStr).catch(()=>{});
   }else{
     habitCompletionSet.add(key);
-    await sb.from('dash_habit_completions').upsert({habit_id:hid,date:dateStr});
+    sb.from('dash_habit_completions').upsert({habit_id:hid,date:dateStr}).catch(()=>{});
   }
   renderHabits();
 }
@@ -1397,27 +1408,32 @@ async function loadHabitCompletions(){
   const{data}=await sb.from('dash_habit_completions').select('habit_id,date').gte('date',dateKey(since));
   habitCompletionSet=new Set((data||[]).map(r=>`${r.habit_id}|${r.date}`));
 }
-function openHabitModal(){openModal('habitModal');}
-async function saveHabit(){
+function openHabitModal(){
+  document.getElementById('habitIconInput').value='';
+  document.getElementById('habitNameInput').value='';
+  openModal('habitModal');
+}
+function saveHabit(){
   const icon=document.getElementById('habitIconInput').value.trim()||'⭐';
   const label=document.getElementById('habitNameInput').value.trim();
   if(!label)return;
   if(!S.habits)S.habits=[];
   const id=String(Date.now());
   S.habits.push({id,icon,label});
-  await sb.from('dash_habits').upsert({id,icon,label,sort_order:S.habits.length});
   addLog('Added',`Habit: "${label}"`,'add');
   save();render();closeModal('habitModal');
   document.getElementById('habitIconInput').value='';
   document.getElementById('habitNameInput').value='';
+  // Background sync
+  sb.from('dash_habits').upsert({id,icon,label,sort_order:S.habits.length}).catch(()=>{});
 }
-async function deleteHabit(id){
+function deleteHabit(id){
   const h=S.habits.find(h=>h.id==id);
   if(h&&confirm(`Delete habit "${h.label}"?`)){
     S.habits=S.habits.filter(h=>h.id!=id);
-    await sb.from('dash_habits').delete().eq('id',String(id));
     addLog('Removed',`Habit: "${h.label}"`,'remove');
     save();renderHabits();
+    sb.from('dash_habits').delete().eq('id',String(id)).catch(()=>{});
   }
 }
 
@@ -1745,12 +1761,54 @@ function startWeatherCanvas(type){
 //  GOOGLE CALENDAR
 // ─────────────────────────────────────
 let gcalToken=null; // in-memory only
+let gcalTokenExpiry=0; // timestamp ms
+let gcalTokenClient=null; // reusable token client
+
+function gcalTokenValid(){return gcalToken&&Date.now()<gcalTokenExpiry-120000;} // 2-min buffer
+
+function gcalEnsureToken(){
+  return new Promise((resolve,reject)=>{
+    if(gcalTokenValid())return resolve(gcalToken);
+    if(!S.gcalClientId)return reject(new Error('No GCal client ID'));
+    function doRequest(client){
+      // Capture old token to detect callback
+      const prev=gcalToken;
+      client.requestAccessToken({prompt:''});
+      // Resolve on callback via gcalToken being set (poll briefly)
+      let attempts=0;
+      const check=setInterval(()=>{
+        attempts++;
+        if(gcalToken&&gcalToken!==prev){clearInterval(check);resolve(gcalToken);}
+        else if(attempts>40){clearInterval(check);reject(new Error('Token refresh timeout'));}
+      },150);
+    }
+    if(gcalTokenClient){doRequest(gcalTokenClient);return;}
+    const script=document.createElement('script');
+    script.src='https://accounts.google.com/gsi/client';
+    script.onload=()=>{
+      gcalTokenClient=google.accounts.oauth2.initTokenClient({
+        client_id:S.gcalClientId,
+        scope:'https://www.googleapis.com/auth/calendar.events',
+        callback:(resp)=>{
+          if(resp.access_token){
+            gcalToken=resp.access_token;
+            gcalTokenExpiry=Date.now()+(resp.expires_in||3600)*1000;
+            save();render();
+          }
+        }
+      });
+      doRequest(gcalTokenClient);
+    };
+    script.onerror=()=>reject(new Error('Could not load Google Sign-In library'));
+    document.head.appendChild(script);
+  });
+}
 
 function updateGcalBtn(){
   const btn=document.getElementById('gcalBtn');
   const pullBtn=document.getElementById('gcalPullBtn');
   if(!btn)return;
-  if(gcalToken){
+  if(gcalTokenValid()){
     btn.textContent='✓ Connected';btn.classList.add('connected');
     if(pullBtn)pullBtn.style.display='inline-flex';
   } else {
@@ -1760,7 +1818,7 @@ function updateGcalBtn(){
 }
 
 function gcalConnect(){
-  if(gcalToken){return;} // already connected
+  if(gcalTokenValid()){return;} // already connected and valid
   if(!S.gcalClientId){
     // Show setup modal
     const originHint=document.getElementById('gcalOriginHint');
@@ -1782,22 +1840,25 @@ function gcalDoConnect(){
 
 function gcalLaunchOAuth(){
   if(!S.gcalClientId)return;
+  if(gcalTokenClient){gcalTokenClient.requestAccessToken();return;}
   const script=document.createElement('script');
   script.src='https://accounts.google.com/gsi/client';
   script.onload=()=>{
-    google.accounts.oauth2.initTokenClient({
+    gcalTokenClient=google.accounts.oauth2.initTokenClient({
       client_id:S.gcalClientId,
       scope:'https://www.googleapis.com/auth/calendar.events',
       callback:(resp)=>{
         if(resp.access_token){
           gcalToken=resp.access_token;
+          gcalTokenExpiry=Date.now()+(resp.expires_in||3600)*1000;
           addLog('Connected','Google Calendar connected','add');
           save();render();
         } else {
           alert('Google Calendar auth failed: '+(resp.error||'unknown error'));
         }
       }
-    }).requestAccessToken();
+    });
+    gcalTokenClient.requestAccessToken();
   };
   script.onerror=()=>alert('Could not load Google Sign-In library. Check your internet connection.');
   document.head.appendChild(script);
@@ -1816,7 +1877,8 @@ function parseEventDateTime(year,month,day,timeStr){
 }
 
 async function syncEventToGcal(dateKey,eventId){
-  if(!gcalToken){alert('Connect Google Calendar first.');return;}
+  let token;
+  try{token=await gcalEnsureToken();}catch(e){alert('Connect Google Calendar first.');return;}
   const dayEvts=S.schedule[dateKey];
   if(!dayEvts)return;
   const ev=dayEvts.find(e=>e.id==eventId);
@@ -1840,7 +1902,7 @@ async function syncEventToGcal(dateKey,eventId){
   try{
     const res=await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
       method:'POST',
-      headers:{'Authorization':'Bearer '+gcalToken,'Content-Type':'application/json'},
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
       body:JSON.stringify(body)
     });
     const data=await res.json();
@@ -1855,14 +1917,15 @@ async function syncEventToGcal(dateKey,eventId){
 }
 
 async function gcalPull(){
-  if(!gcalToken){alert('Connect Google Calendar first.');return;}
+  let token;
+  try{token=await gcalEnsureToken();}catch(e){alert('Connect Google Calendar first.');return;}
   const week=getWeekDates();
   const timeMin=new Date(week[0]);timeMin.setHours(0,0,0,0);
   const timeMax=new Date(week[6]);timeMax.setHours(23,59,59,999);
 
   try{
     const res=await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${timeMin.toISOString()}&timeMax=${timeMax.toISOString()}&singleEvents=true&maxResults=50`,{
-      headers:{'Authorization':'Bearer '+gcalToken}
+      headers:{'Authorization':'Bearer '+token}
     });
     const data=await res.json();
     if(!data.items){alert('Failed to pull events.');return;}
