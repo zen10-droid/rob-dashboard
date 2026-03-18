@@ -1176,6 +1176,21 @@ function renderLog(){
     </div>`).join('');
 }
 
+function migrateHabits(){
+  if(!S.habits)S.habits=[];
+  const required=[
+    {id:'daily-water',icon:'💧',label:'Drink 3 Cups of Water'},
+    {id:'daily-pushups',icon:'💪',label:'50 Push-Ups'},
+  ];
+  let changed=false;
+  required.forEach(h=>{
+    if(!S.habits.find(x=>x.id===h.id)){
+      S.habits.push({...h});
+      changed=true;
+    }
+  });
+  if(changed)save();
+}
 function migrateNotes(){
   if(typeof S.notes==='string'){S.notes=S.notes?[{id:Date.now(),title:'Notes',body:S.notes,updatedAt:new Date().toISOString()}]:[];}
   if(!S.notes)S.notes=[];
@@ -2013,6 +2028,7 @@ if('Notification'in window&&Notification.permission==='default')Notification.req
 // ─────────────────────────────────────
 async function boot(){
   await initState();
+  migrateHabits();
   migrateNotes();
   getWeekDates().forEach(d=>{const k=dateKey(d);if(!S.schedule[k])S.schedule[k]=[];});
   await Promise.all([loadHabitCompletions(),loadTodayIncome()]);
