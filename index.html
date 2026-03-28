@@ -8,22 +8,22 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root {
-  --gold:#D4AF6A; --gold-light:#EDD38E; --gold-dim:rgba(212,175,106,0.13); --gold-line:rgba(212,175,106,0.35);
-  --black:#0C0C0C; --surface:#181818; --surface2:#212121; --surface3:#2A2A2A;
-  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
-  --text:#F4F2EE; --text2:#C0B8AE; --text3:#6A6460;
-  --danger:#E06B5A; --success:#5DBF80; --blue:#7AABCF; --orange:#D4854A; --purple:#A07AC9;
+  --gold:#8B6914; --gold-light:#A8841E; --gold-dim:rgba(139,105,20,0.08); --gold-line:rgba(139,105,20,0.22);
+  --black:#FAFAF8; --surface:#FFFFFF; --surface2:#F5F3EF; --surface3:#EAE7E1;
+  --border:rgba(0,0,0,0.06); --border2:rgba(0,0,0,0.10);
+  --text:#1A1714; --text2:#4A453F; --text3:#90887E;
+  --danger:#B83228; --success:#1A7A3E; --blue:#1A5A8A; --orange:#B84A00; --purple:#7030A0;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{font-size:15px;scroll-behavior:smooth;}
 body{font-family:'Montserrat',sans-serif;background:var(--black);color:var(--text);min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260px;pointer-events:none;z-index:1;background:radial-gradient(ellipse,rgba(212,175,106,0.07) 0%,transparent 70%);}
+body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260px;pointer-events:none;z-index:1;background:radial-gradient(ellipse,rgba(139,105,20,0.05) 0%,transparent 70%);}
 
 /* Weather Canvas */
 #weatherCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 
 /* ── TOPBAR ── */
-.topbar{position:sticky;top:0;z-index:500;background:rgba(12,12,12,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border2);padding:0 18px;display:flex;align-items:center;justify-content:space-between;height:54px;}
+.topbar{position:sticky;top:0;z-index:500;background:rgba(250,250,248,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border2);padding:0 18px;display:flex;align-items:center;justify-content:space-between;height:54px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
 .brand{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;letter-spacing:1px;}
 .brand em{font-style:italic;color:var(--gold);}
 .topbar-right{display:flex;align-items:center;gap:14px;}
@@ -35,7 +35,7 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
 
 /* ── NAV TABS ── */
-.nav{display:flex;border-bottom:1px solid var(--border2);background:rgba(12,12,12,0.95);position:sticky;top:54px;z-index:400;overflow-x:auto;scrollbar-width:none;}
+.nav{display:flex;border-bottom:1px solid var(--border2);background:rgba(250,250,248,0.97);position:sticky;top:54px;z-index:400;overflow-x:auto;scrollbar-width:none;}
 .nav::-webkit-scrollbar{display:none;}
 .nav-tab{flex-shrink:0;padding:12px 18px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
 .nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
@@ -91,7 +91,7 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:20px;}
 .stat-cell{background:var(--surface);padding:14px 12px;position:relative;}
 .stat-cell::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.stat-cell:nth-child(1)::before{background:linear-gradient(90deg,var(--gold),#8B6F3A);}
+.stat-cell:nth-child(1)::before{background:linear-gradient(90deg,var(--gold),var(--gold-dim));}
 .stat-cell:nth-child(2)::before{background:linear-gradient(90deg,var(--success),#3A7A50);}
 .stat-cell:nth-child(3)::before{background:linear-gradient(90deg,var(--blue),#4A7A9F);}
 .stat-lbl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
@@ -332,6 +332,7 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
   <div class="nav-tab" onclick="switchTab('tasks')">&#9989; Tasks</div>
   <div class="nav-tab" onclick="switchTab('income')">&#128176; Income</div>
   <div class="nav-tab" onclick="switchTab('projects')">&#128640; Projects</div>
+  <div class="nav-tab" onclick="switchTab('sites')">&#127758; Sites</div>
   <div class="nav-tab" onclick="switchTab('habits')">&#128293; Habits</div>
   <div class="nav-tab" onclick="switchTab('notes')">&#128196; Notes</div>
   <div class="nav-tab" onclick="switchTab('log')">&#8230; Log</div>
@@ -469,6 +470,15 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
   <div class="pipeline-list" id="pipelineList"></div>
 </div>
 
+<!-- ── SITES TAB ── -->
+<div class="tab-content" id="tab-sites">
+  <div class="sec-head">
+    <div class="sec-title">Live <em>Sites</em></div>
+    <div class="sec-meta" id="sitesMeta"></div>
+  </div>
+  <div class="project-list" id="siteList"></div>
+</div>
+
 <!-- ── HABITS TAB ── -->
 <div class="tab-content" id="tab-habits">
   <div class="sec-head">
@@ -504,7 +514,7 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
 </div><!-- /page -->
 
 <!-- ── POMODORO WIDGET ── -->
-<div id="pomoWidget" style="position:fixed;bottom:24px;left:20px;z-index:300;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.5);">
+<div id="pomoWidget" style="position:fixed;bottom:24px;left:20px;z-index:300;background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.10),0 1px 3px rgba(0,0,0,.06);">
   <div style="position:relative;width:52px;height:52px;flex-shrink:0;">
     <svg width="52" height="52" style="transform:rotate(-90deg);">
       <circle cx="26" cy="26" r="22" fill="none" stroke="var(--border2)" stroke-width="3"/>
@@ -712,11 +722,11 @@ body::before{content:'';position:fixed;top:-80px;left:40%;width:500px;height:260
     <div class="form-row">
       <div class="form-group">
         <label class="form-label">Emoji Icon</label>
-        <input class="form-input" id="habitIconInput" placeholder="&#129347;" maxlength="2">
+        <input class="form-input" id="habitIconInput" placeholder="&#129347;" maxlength="2" autocomplete="off">
       </div>
       <div class="form-group">
         <label class="form-label">Habit Name</label>
-        <input class="form-input" id="habitNameInput" placeholder="e.g. Drink water">
+        <input class="form-input" id="habitNameInput" placeholder="e.g. Drink water" autocomplete="off">
       </div>
     </div>
     <div class="modal-actions">
@@ -814,10 +824,18 @@ function seed(){return{
     {id:5,title:"Pookie's Videos",stage:'filming'},
   ],
   projects:[
-    {id:1,name:'Williams Systems',desc:'SaaS for independent car rental owners. Priority: close first paying customer via cold outreach.',color:'gold',tags:['SaaS','Cold Outreach','High Priority']},
-    {id:2,name:'Cinema.Rob',desc:'UGC creator brand. Building portfolio for brand partnerships. Instagram: @Cinema.Rob',color:'blue',tags:['UGC','Content','Instagram']},
-    {id:3,name:'Dream World Defender',desc:'Roblox tower defense game. Map currently in progress.',color:'orange',tags:['Roblox','Game Dev']},
+    {id:1,name:'Williams Systems',desc:'SaaS platform for exotic car rental owners. Convert Turo renters to direct long-term clients. Live at williamssystems.shop.',color:'gold',tags:['SaaS','Live','Revenue']},
+    {id:2,name:'AutoTube',desc:'AI video automation pipeline for YouTube Shorts. Agents: Jordan (trends), Dre (script), Maya (voice), Marcus (assembly), Ralph (thumbnail), Zara (upload).',color:'blue',tags:['AI','YouTube','Automation']},
+    {id:3,name:'LandlordCRM',desc:'CRM dashboard for rental property owner prospecting. Track prospects, calls, emails, and pipeline stages.',color:'orange',tags:['CRM','Sales','Local']},
+    {id:4,name:'StreamBridge',desc:'Full-stack streaming platform with Stripe subscriptions, Pusher real-time features, and Prisma ORM.',color:'purple',tags:['SaaS','Streaming','Live']},
+    {id:5,name:'Trade Tracker',desc:'Prediction market trade tracker for Kalshi and Polymarket with AI insights via Claude.',color:'blue',tags:['Trading','AI','Finance']},
+    {id:6,name:'DreamWorldDefender',desc:'Roblox tower defense game — custom mob waves, tower upgrades, and multiple maps.',color:'orange',tags:['Roblox','Game Dev']},
+    {id:7,name:'ShatterLabs',desc:'Roblox glass-breaking clicker/simulator with progression systems and shop.',color:'purple',tags:['Roblox','Game Dev']},
+    {id:8,name:'Cinema.Rob',desc:'UGC creator brand on Instagram. Building portfolio for brand partnerships. @Cinema.Rob',color:'gold',tags:['UGC','Content','Instagram']},
+    {id:9,name:'Personal Bot',desc:'Telegram personal assistant with task management, Google Calendar sync, and Notion integration.',color:'blue',tags:['Bot','Automation','Telegram']},
+    {id:10,name:'Rob Dashboard',desc:'This personal command center. Tasks, habits, schedule, income, and projects all in one place.',color:'gold',tags:['Productivity','Live']},
   ],
+  sites:[],
   gcalClientId: null,
 };}
 
@@ -911,7 +929,7 @@ function switchTab(name){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  const tabs=['home','schedule','tasks','income','projects','habits','notes','log'];
+  const tabs=['home','schedule','tasks','income','projects','sites','habits','notes','log'];
   document.querySelectorAll('.nav-tab')[tabs.indexOf(name)]?.classList.add('active');
   window.scrollTo(0,0);
 }
@@ -919,7 +937,7 @@ function switchTab(name){
 // ─────────────────────────────────────
 //  RENDER ALL
 // ─────────────────────────────────────
-function render(){renderStats();renderFocus();renderHome();renderWeek();renderTasks();renderIncome();renderProjects();renderPipeline();renderHabits();renderLog();renderNotes();renderQuote();updateGcalBtn();}
+function render(){renderStats();renderFocus();renderHome();renderWeek();renderTasks();renderIncome();renderProjects();renderPipeline();renderSites();renderHabits();renderLog();renderNotes();renderQuote();updateGcalBtn();}
 
 function renderStats(){
   document.getElementById('statTotal').textContent=S.tasks.length;
@@ -1011,12 +1029,23 @@ function renderWeek(){
   const dsel=document.getElementById('eventDayInput');
   if(dsel){dsel.innerHTML=week.map(d=>{const k=dateKey(d);return `<option value="${k}">${DAYS_F[d.getDay()]} ${MONTHS_S[d.getMonth()]} ${d.getDate()}</option>`;}).join('');}
 
+  const dailyTasks=(S.tasks||[]).filter(t=>t.daily&&!t.done);
   week.forEach(d=>{
     const k=dateKey(d),isT=d.getTime()===today.getTime();
     const evts=(S.schedule[k]||[]).sort((a,b)=>a.time.localeCompare(b.time));
-    const count=evts.length;
-    const prevHTML=evts.length?evts.slice(0,2).map(e=>`<div class="preview-pill"><div class="pdot ${e.type}"></div><span>${esc(e.time)} — ${esc(e.title)}</span></div>`).join(''):`<div style="font-size:10px;color:var(--text3);font-style:italic;">Nothing scheduled</div>`;
-    const evHTML=evts.length?evts.map(e=>{
+    // Inject recurring daily tasks as virtual events
+    const virtualEvts=dailyTasks.map(t=>({id:`daily-${t.id}`,time:'Daily',title:t.text,type:'personal',virtual:true}));
+    const allEvts=[...evts,...virtualEvts];
+    const count=evts.length; // badge shows real events only
+    const prevHTML=allEvts.length?allEvts.slice(0,2).map(e=>`<div class="preview-pill"><div class="pdot ${e.type}"></div><span>${e.virtual?'↻':esc(e.time)} — ${esc(e.title)}</span></div>`).join(''):`<div style="font-size:10px;color:var(--text3);font-style:italic;">Nothing scheduled</div>`;
+    const evHTML=allEvts.length?allEvts.map(e=>{
+      if(e.virtual){
+        return `<div class="ev-item ${e.type}" style="opacity:0.7;">
+          <div class="ev-time" style="color:var(--gold);">↻</div>
+          <div class="ev-body"><div class="ev-title">${esc(e.title)}</div></div>
+          <div class="ev-tag ${e.type}">daily</div>
+        </div>`;
+      }
       const synced=e.gcalId?true:false;
       const gcalBtnHTML=gcalToken?`<button class="ev-gcal-btn${synced?' synced':''}" onclick="syncEventToGcal('${k}',${e.id})" title="${synced?'Synced to Google Calendar':'Push to Google Calendar'}">${synced?'✓':'📅'}</button>`:'';
       return `
@@ -1165,9 +1194,68 @@ function renderLog(){
     </div>`).join('');
 }
 
+function migrateHabits(){
+  if(!S.habits)S.habits=[];
+  const required=[
+    {id:'daily-water',icon:'💧',label:'Drink 3 Cups of Water'},
+    {id:'daily-pushups',icon:'💪',label:'50 Push-Ups'},
+  ];
+  let changed=false;
+  required.forEach(h=>{
+    if(!S.habits.find(x=>x.id===h.id)){
+      S.habits.push({...h});
+      changed=true;
+    }
+  });
+  if(changed)save();
+}
 function migrateNotes(){
   if(typeof S.notes==='string'){S.notes=S.notes?[{id:Date.now(),title:'Notes',body:S.notes,updatedAt:new Date().toISOString()}]:[];}
   if(!S.notes)S.notes=[];
+}
+
+function migrateSites(){
+  if(S.sites&&S.sites.length)return;
+  S.sites=[
+    {id:1,name:'Williams Systems',url:'https://williamssystems.shop',desc:'SaaS for exotic car rental owners — fleet, bookings, invoices, agreements.',stack:['Next.js 14','Supabase','Stripe'],status:'live'},
+    {id:2,name:'YouTube Automation',url:'https://youtube-automation-woad.vercel.app',desc:'AI video pipeline for YouTube Shorts — 6 agents from trends to upload.',stack:['Next.js','Supabase','ElevenLabs'],status:'live'},
+    {id:3,name:'StreamBridge',url:'https://streambridge-eight.vercel.app',desc:'Full-stack live streaming platform with subscriptions.',stack:['Next.js','Prisma 5','Stripe'],status:'live'},
+    {id:4,name:'Trade Tracker',url:'https://trade-tracker-omega.vercel.app',desc:'Prediction market tracker for Kalshi and Polymarket with AI insights.',stack:['Next.js','Claude AI'],status:'live'},
+    {id:5,name:'Rob Dashboard',url:'https://rob-dashboard-sandy.vercel.app',desc:'This command center — tasks, habits, schedule, income, and sites.',stack:['HTML','Supabase'],status:'live'},
+    {id:6,name:'LandlordCRM',url:'',desc:'CRM for rental property owner prospecting. Runs locally.',stack:['Next.js 16','Prisma 7','SQLite'],status:'local'},
+    {id:7,name:'DreamWorldDefender',url:'',desc:'Roblox tower defense game with mob waves and tower upgrades.',stack:['Lua','Rojo','Roblox'],status:'roblox'},
+    {id:8,name:'ShatterLabs',url:'',desc:'Roblox glass-breaking clicker/simulator with progression systems.',stack:['Lua','Rojo','Roblox'],status:'roblox'},
+  ];
+  save();
+}
+
+function renderSites(){
+  migrateSites();
+  const el=document.getElementById('siteList');
+  if(!el)return;
+  const STATUS={
+    live:{dot:'var(--success)',label:'LIVE',dotHex:'#1A7A3E',bg:'rgba(26,122,62,0.07)',border:'rgba(26,122,62,0.18)'},
+    local:{dot:'var(--blue)',label:'LOCAL',dotHex:'#1A5A8A',bg:'rgba(26,90,138,0.07)',border:'rgba(26,90,138,0.18)'},
+    roblox:{dot:'var(--orange)',label:'ROBLOX',dotHex:'#B84A00',bg:'rgba(184,74,0,0.07)',border:'rgba(184,74,0,0.18)'},
+    paused:{dot:'var(--text3)',label:'PAUSED',dotHex:'#90887E',bg:'rgba(0,0,0,0.04)',border:'rgba(0,0,0,0.08)'},
+  };
+  const liveCount=(S.sites||[]).filter(s=>s.status==='live').length;
+  const meta=document.getElementById('sitesMeta');
+  if(meta)meta.textContent=`${liveCount} live`;
+  el.innerHTML=(S.sites||[]).map(s=>{
+    const st=STATUS[s.status]||STATUS.paused;
+    return `<div class="project-item" style="border-left:3px solid ${st.dotHex};">
+      <div class="project-head">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+          <div class="project-name" style="white-space:nowrap;">${esc(s.name)}</div>
+          <span style="font-family:'DM Mono',monospace;font-size:8px;padding:2px 7px;border-radius:20px;background:${st.bg};color:${st.dotHex};border:1px solid ${st.border};letter-spacing:.5px;flex-shrink:0;">${st.label}</span>
+        </div>
+        ${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gold);text-decoration:none;border:1px solid var(--gold-line);padding:5px 11px;border-radius:7px;white-space:nowrap;flex-shrink:0;transition:all .2s;" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='transparent'">Visit &#x2197;</a>`:'<span style="font-size:9px;color:var(--text3);font-family:\'DM Mono\',monospace;">no url</span>'}
+      </div>
+      <div class="project-desc">${esc(s.desc)}</div>
+      <div class="project-tags">${(s.stack||[]).map(t=>`<span class="ptag">${esc(t)}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
 }
 function addNote(){
   migrateNotes();
@@ -1320,14 +1408,14 @@ function openIncomeModal(key,label,current){
   document.getElementById('incomeAmountInput').value=current||0;
   openModal('incomeModal');
 }
-async function saveIncome(){
+function saveIncome(){
   const key=document.getElementById('incomeKeyInput').value;
   const amount=parseFloat(document.getElementById('incomeAmountInput').value)||0;
   const today=dateKey(new Date());
   todayIncome[key]=amount;
-  await sb.from('dash_income_history').upsert({date:today,source:key,amount});
   addLog('Updated',`Income: ${key} = $${amount}`,'update');
   save();renderIncome();closeModal('incomeModal');
+  sb.from('dash_income_history').upsert({date:today,source:key,amount}).catch(()=>{});
 }
 
 // ─────────────────────────────────────
@@ -1381,14 +1469,14 @@ function updatePipelineStage(id,stage){
 // ─────────────────────────────────────
 //  HABITS
 // ─────────────────────────────────────
-async function toggleHabit(hid,dateStr){
+function toggleHabit(hid,dateStr){
   const key=`${hid}|${dateStr}`;
   if(habitCompletionSet.has(key)){
     habitCompletionSet.delete(key);
-    await sb.from('dash_habit_completions').delete().eq('habit_id',hid).eq('date',dateStr);
+    sb.from('dash_habit_completions').delete().eq('habit_id',hid).eq('date',dateStr).catch(()=>{});
   }else{
     habitCompletionSet.add(key);
-    await sb.from('dash_habit_completions').upsert({habit_id:hid,date:dateStr});
+    sb.from('dash_habit_completions').upsert({habit_id:hid,date:dateStr}).catch(()=>{});
   }
   renderHabits();
 }
@@ -1397,27 +1485,32 @@ async function loadHabitCompletions(){
   const{data}=await sb.from('dash_habit_completions').select('habit_id,date').gte('date',dateKey(since));
   habitCompletionSet=new Set((data||[]).map(r=>`${r.habit_id}|${r.date}`));
 }
-function openHabitModal(){openModal('habitModal');}
-async function saveHabit(){
+function openHabitModal(){
+  document.getElementById('habitIconInput').value='';
+  document.getElementById('habitNameInput').value='';
+  openModal('habitModal');
+}
+function saveHabit(){
   const icon=document.getElementById('habitIconInput').value.trim()||'⭐';
   const label=document.getElementById('habitNameInput').value.trim();
   if(!label)return;
   if(!S.habits)S.habits=[];
   const id=String(Date.now());
   S.habits.push({id,icon,label});
-  await sb.from('dash_habits').upsert({id,icon,label,sort_order:S.habits.length});
   addLog('Added',`Habit: "${label}"`,'add');
   save();render();closeModal('habitModal');
   document.getElementById('habitIconInput').value='';
   document.getElementById('habitNameInput').value='';
+  // Background sync
+  sb.from('dash_habits').upsert({id,icon,label,sort_order:S.habits.length}).catch(()=>{});
 }
-async function deleteHabit(id){
+function deleteHabit(id){
   const h=S.habits.find(h=>h.id==id);
   if(h&&confirm(`Delete habit "${h.label}"?`)){
     S.habits=S.habits.filter(h=>h.id!=id);
-    await sb.from('dash_habits').delete().eq('id',String(id));
     addLog('Removed',`Habit: "${h.label}"`,'remove');
     save();renderHabits();
+    sb.from('dash_habits').delete().eq('id',String(id)).catch(()=>{});
   }
 }
 
@@ -1553,26 +1646,26 @@ function applyWeather(){
   // CSS variable tweaks
   const root=document.documentElement;
   if(effectiveType==='clear'){
-    root.style.setProperty('--black','#0E0B06');
-    root.style.setProperty('--surface','#1A1610');
+    root.style.setProperty('--black','#FDF9EF');
+    root.style.setProperty('--surface','#FFFEF8');
   } else if(effectiveType==='night'){
-    root.style.setProperty('--black','#050810');
-    root.style.setProperty('--surface','#0D1020');
+    root.style.setProperty('--black','#F3F5FA');
+    root.style.setProperty('--surface','#F7F9FD');
   } else if(effectiveType==='rain'){
-    root.style.setProperty('--black','#060A10');
-    root.style.setProperty('--surface','#101520');
+    root.style.setProperty('--black','#F2F5F9');
+    root.style.setProperty('--surface','#F6F8FB');
   } else if(effectiveType==='snow'){
-    root.style.setProperty('--black','#060A0F');
-    root.style.setProperty('--surface','#0C1220');
+    root.style.setProperty('--black','#F4F6FA');
+    root.style.setProperty('--surface','#F8FAFD');
   } else if(effectiveType==='thunder'){
-    root.style.setProperty('--black','#080608');
-    root.style.setProperty('--surface','#110D14');
+    root.style.setProperty('--black','#F3F3F6');
+    root.style.setProperty('--surface','#F7F7FA');
   } else if(effectiveType==='fog'){
-    root.style.setProperty('--black','#080808');
-    root.style.setProperty('--surface','#141414');
+    root.style.setProperty('--black','#F5F5F3');
+    root.style.setProperty('--surface','#FAFAF8');
   } else {
-    root.style.setProperty('--black','#0A0C10');
-    root.style.setProperty('--surface','#151820');
+    root.style.setProperty('--black','#F5F4F2');
+    root.style.setProperty('--surface','#FAFAF8');
   }
 
   // Start canvas
@@ -1610,7 +1703,7 @@ function startWeatherCanvas(type){
         if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
         if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
         ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fillStyle=`rgba(212,175,106,${p.a})`;ctx.fill();
+        ctx.fillStyle=`rgba(139,105,20,${p.a})`;ctx.fill();
       });
       canvasAnim=requestAnimationFrame(frame);
     }
@@ -1622,7 +1715,7 @@ function startWeatherCanvas(type){
     }));
     function frame(){
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.strokeStyle='rgba(120,150,180,0.22)';ctx.lineWidth=1;
+      ctx.strokeStyle='rgba(50,80,140,0.16)';ctx.lineWidth=1;
       drops.forEach(d=>{
         ctx.globalAlpha=d.a;
         ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-d.len*0.18,d.y+d.len);ctx.stroke();
@@ -1649,7 +1742,7 @@ function startWeatherCanvas(type){
         if(f.y>canvas.height){f.y=-f.r*2;f.x=Math.random()*canvas.width;}
         if(f.x<-10)f.x=canvas.width+10;if(f.x>canvas.width+10)f.x=-10;
         ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
-        ctx.fillStyle=`rgba(200,220,255,${f.a})`;ctx.fill();
+        ctx.fillStyle=`rgba(60,100,165,${f.a})`;ctx.fill();
       });
       canvasAnim=requestAnimationFrame(frame);
     }
@@ -1663,7 +1756,7 @@ function startWeatherCanvas(type){
     function frame(){
       ctx.clearRect(0,0,canvas.width,canvas.height);
       // Rain
-      ctx.strokeStyle='rgba(100,120,150,0.2)';ctx.lineWidth=1;
+      ctx.strokeStyle='rgba(50,80,140,0.16)';ctx.lineWidth=1;
       drops.forEach(d=>{
         ctx.globalAlpha=d.a;
         ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x-d.len*0.2,d.y+d.len);ctx.stroke();
@@ -1696,7 +1789,7 @@ function startWeatherCanvas(type){
         if(b.x<-b.rx)b.x=canvas.width+b.rx;if(b.x>canvas.width+b.rx)b.x=-b.rx;
         if(b.y<-b.ry)b.y=canvas.height+b.ry;if(b.y>canvas.height+b.ry)b.y=-b.ry;
         const g=ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,Math.max(b.rx,b.ry));
-        g.addColorStop(0,`rgba(180,180,190,${b.a})`);g.addColorStop(1,'rgba(180,180,190,0)');
+        g.addColorStop(0,`rgba(80,80,95,${b.a})`);g.addColorStop(1,'rgba(80,80,95,0)');
         ctx.save();ctx.scale(1,b.ry/b.rx);
         ctx.fillStyle=g;ctx.beginPath();ctx.arc(b.x,b.y*b.rx/b.ry,b.rx,0,Math.PI*2);ctx.fill();
         ctx.restore();
@@ -1733,7 +1826,7 @@ function startWeatherCanvas(type){
       stars.forEach(s=>{
         s.a+=s.da;if(s.a>0.9||s.a<0.05)s.da=-s.da;
         ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-        ctx.fillStyle=`rgba(200,215,255,${s.a})`;ctx.fill();
+        ctx.fillStyle=`rgba(30,50,120,${s.a})`;ctx.fill();
       });
       canvasAnim=requestAnimationFrame(frame);
     }
@@ -1745,12 +1838,54 @@ function startWeatherCanvas(type){
 //  GOOGLE CALENDAR
 // ─────────────────────────────────────
 let gcalToken=null; // in-memory only
+let gcalTokenExpiry=0; // timestamp ms
+let gcalTokenClient=null; // reusable token client
+
+function gcalTokenValid(){return gcalToken&&Date.now()<gcalTokenExpiry-120000;} // 2-min buffer
+
+function gcalEnsureToken(){
+  return new Promise((resolve,reject)=>{
+    if(gcalTokenValid())return resolve(gcalToken);
+    if(!S.gcalClientId)return reject(new Error('No GCal client ID'));
+    function doRequest(client){
+      // Capture old token to detect callback
+      const prev=gcalToken;
+      client.requestAccessToken({prompt:''});
+      // Resolve on callback via gcalToken being set (poll briefly)
+      let attempts=0;
+      const check=setInterval(()=>{
+        attempts++;
+        if(gcalToken&&gcalToken!==prev){clearInterval(check);resolve(gcalToken);}
+        else if(attempts>40){clearInterval(check);reject(new Error('Token refresh timeout'));}
+      },150);
+    }
+    if(gcalTokenClient){doRequest(gcalTokenClient);return;}
+    const script=document.createElement('script');
+    script.src='https://accounts.google.com/gsi/client';
+    script.onload=()=>{
+      gcalTokenClient=google.accounts.oauth2.initTokenClient({
+        client_id:S.gcalClientId,
+        scope:'https://www.googleapis.com/auth/calendar.events',
+        callback:(resp)=>{
+          if(resp.access_token){
+            gcalToken=resp.access_token;
+            gcalTokenExpiry=Date.now()+(resp.expires_in||3600)*1000;
+            save();render();
+          }
+        }
+      });
+      doRequest(gcalTokenClient);
+    };
+    script.onerror=()=>reject(new Error('Could not load Google Sign-In library'));
+    document.head.appendChild(script);
+  });
+}
 
 function updateGcalBtn(){
   const btn=document.getElementById('gcalBtn');
   const pullBtn=document.getElementById('gcalPullBtn');
   if(!btn)return;
-  if(gcalToken){
+  if(gcalTokenValid()){
     btn.textContent='✓ Connected';btn.classList.add('connected');
     if(pullBtn)pullBtn.style.display='inline-flex';
   } else {
@@ -1760,7 +1895,7 @@ function updateGcalBtn(){
 }
 
 function gcalConnect(){
-  if(gcalToken){return;} // already connected
+  if(gcalTokenValid()){return;} // already connected and valid
   if(!S.gcalClientId){
     // Show setup modal
     const originHint=document.getElementById('gcalOriginHint');
@@ -1782,22 +1917,25 @@ function gcalDoConnect(){
 
 function gcalLaunchOAuth(){
   if(!S.gcalClientId)return;
+  if(gcalTokenClient){gcalTokenClient.requestAccessToken();return;}
   const script=document.createElement('script');
   script.src='https://accounts.google.com/gsi/client';
   script.onload=()=>{
-    google.accounts.oauth2.initTokenClient({
+    gcalTokenClient=google.accounts.oauth2.initTokenClient({
       client_id:S.gcalClientId,
       scope:'https://www.googleapis.com/auth/calendar.events',
       callback:(resp)=>{
         if(resp.access_token){
           gcalToken=resp.access_token;
+          gcalTokenExpiry=Date.now()+(resp.expires_in||3600)*1000;
           addLog('Connected','Google Calendar connected','add');
           save();render();
         } else {
           alert('Google Calendar auth failed: '+(resp.error||'unknown error'));
         }
       }
-    }).requestAccessToken();
+    });
+    gcalTokenClient.requestAccessToken();
   };
   script.onerror=()=>alert('Could not load Google Sign-In library. Check your internet connection.');
   document.head.appendChild(script);
@@ -1816,7 +1954,8 @@ function parseEventDateTime(year,month,day,timeStr){
 }
 
 async function syncEventToGcal(dateKey,eventId){
-  if(!gcalToken){alert('Connect Google Calendar first.');return;}
+  let token;
+  try{token=await gcalEnsureToken();}catch(e){alert('Connect Google Calendar first.');return;}
   const dayEvts=S.schedule[dateKey];
   if(!dayEvts)return;
   const ev=dayEvts.find(e=>e.id==eventId);
@@ -1840,7 +1979,7 @@ async function syncEventToGcal(dateKey,eventId){
   try{
     const res=await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events',{
       method:'POST',
-      headers:{'Authorization':'Bearer '+gcalToken,'Content-Type':'application/json'},
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
       body:JSON.stringify(body)
     });
     const data=await res.json();
@@ -1855,14 +1994,15 @@ async function syncEventToGcal(dateKey,eventId){
 }
 
 async function gcalPull(){
-  if(!gcalToken){alert('Connect Google Calendar first.');return;}
+  let token;
+  try{token=await gcalEnsureToken();}catch(e){alert('Connect Google Calendar first.');return;}
   const week=getWeekDates();
   const timeMin=new Date(week[0]);timeMin.setHours(0,0,0,0);
   const timeMax=new Date(week[6]);timeMax.setHours(23,59,59,999);
 
   try{
     const res=await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${timeMin.toISOString()}&timeMax=${timeMax.toISOString()}&singleEvents=true&maxResults=50`,{
-      headers:{'Authorization':'Bearer '+gcalToken}
+      headers:{'Authorization':'Bearer '+token}
     });
     const data=await res.json();
     if(!data.items){alert('Failed to pull events.');return;}
@@ -1950,7 +2090,9 @@ if('Notification'in window&&Notification.permission==='default')Notification.req
 // ─────────────────────────────────────
 async function boot(){
   await initState();
+  migrateHabits();
   migrateNotes();
+  migrateSites();
   getWeekDates().forEach(d=>{const k=dateKey(d);if(!S.schedule[k])S.schedule[k]=[];});
   await Promise.all([loadHabitCompletions(),loadTodayIncome()]);
   updateWeekLabel();
