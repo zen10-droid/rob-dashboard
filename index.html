@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ROB'S COMMAND CENTER</title>
+  <title>ROB.EXE</title>
   <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
   <style>
@@ -31,12 +31,7 @@
     }
 
     /* ── BG CANVAS ── */
-    #bg {
-      position: fixed;
-      top: 0; left: 0;
-      z-index: 0;
-      display: block;
-    }
+    #bg { position: fixed; top: 0; left: 0; z-index: 0; display: block; }
 
     /* ── OVERLAYS ── */
     .vignette {
@@ -53,313 +48,184 @@
 
     /* ── APP ── */
     .app {
-      position: relative;
-      z-index: 2;
-      max-width: 620px;
-      margin: 0 auto;
+      position: relative; z-index: 2;
+      max-width: 620px; margin: 0 auto;
       padding: 20px 16px 80px;
     }
 
     /* ── TITLEBAR ── */
     .titlebar {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      display: flex; align-items: center; gap: 14px;
       padding: 16px 0 18px;
       border-bottom: 1px solid var(--panel-b);
-      margin-bottom: 28px;
+      margin-bottom: 14px;
     }
     .tb-dots { display: flex; gap: 7px; flex-shrink: 0; }
-    .tb-dot {
-      width: 11px; height: 11px; border-radius: 50%;
-    }
+    .tb-dot { width: 11px; height: 11px; border-radius: 50%; }
     .tb-dot.cl { background: #ff5f57; box-shadow: 0 0 6px #ff5f5788; }
     .tb-dot.mn { background: #febc2e; box-shadow: 0 0 6px #febc2e88; }
     .tb-dot.mx { background: #28c840; box-shadow: 0 0 6px #28c84088; }
-
     .tb-title {
       flex: 1;
-      font-family: 'VT323', monospace;
-      font-size: 24px;
-      letter-spacing: 3px;
-      color: var(--cyan);
+      font-family: 'VT323', monospace; font-size: 26px;
+      letter-spacing: 3px; color: var(--cyan);
       text-shadow: 0 0 10px var(--cyan-glow), 0 0 28px rgba(0,255,255,0.18);
     }
-    .tb-title .cur {
-      display: inline-block;
-      animation: cur 1.1s step-end infinite;
-    }
+    .tb-title .cur { display: inline-block; animation: cur 1.1s step-end infinite; }
     @keyframes cur { 50% { opacity: 0; } }
-
     .tb-clock {
-      font-family: 'VT323', monospace;
-      font-size: 20px;
-      color: rgba(0, 255, 255, 0.5);
-      letter-spacing: 1px;
-      flex-shrink: 0;
+      font-family: 'VT323', monospace; font-size: 20px;
+      color: rgba(0,255,255,0.5); letter-spacing: 1px; flex-shrink: 0;
     }
+
+    /* ── STATUS STRIP ── */
+    .status-strip {
+      display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding: 10px 0 12px;
+      border-bottom: 1px dashed rgba(0,255,255,0.1);
+    }
+    .ss-chip {
+      display: flex; align-items: center; gap: 7px;
+      padding: 5px 11px;
+      border: 1px solid rgba(0,255,255,0.14);
+      border-radius: 2px;
+      background: rgba(0,255,255,0.025);
+      font-family: 'VT323', monospace; font-size: 16px;
+      color: rgba(0,255,255,0.68); letter-spacing: 1px;
+      white-space: nowrap;
+    }
+    .ss-chip.accent { border-color: rgba(0,255,65,0.25); background: rgba(0,255,65,0.03); color: rgba(0,255,65,0.75); }
+    .ss-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 6px rgba(0,255,65,0.8);
+      animation: dotpulse 2.2s ease-in-out infinite;
+    }
+    @keyframes dotpulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
 
     /* ── PANELS ── */
     .panel {
       background: var(--panel-bg);
-      border: 1px solid var(--panel-b);
-      border-radius: 3px;
-      margin-bottom: 18px;
-      padding: 16px 18px;
+      border: 1px solid var(--panel-b); border-radius: 3px;
+      margin-bottom: 18px; padding: 16px 18px;
       backdrop-filter: blur(14px);
       box-shadow: 0 0 30px rgba(0,255,255,0.04), inset 0 0 40px rgba(0,0,0,0.45);
     }
     .panel.tonight {
-      border-color: rgba(0, 255, 255, 0.36);
+      border-color: rgba(0,255,255,0.36);
       box-shadow: 0 0 45px rgba(0,255,255,0.09), inset 0 0 40px rgba(0,0,0,0.45);
     }
-
     .panel-hd {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px; padding-bottom: 12px;
       border-bottom: 1px solid var(--panel-b-dim);
     }
-    .panel-icon {
-      font-family: 'VT323', monospace;
-      font-size: 22px;
-      color: var(--cyan);
-      text-shadow: 0 0 9px var(--cyan-glow);
-    }
-    .panel-title {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 11px;
-      color: var(--cyan);
-      text-shadow: 0 0 8px rgba(0,255,255,0.33);
-      letter-spacing: 1px;
-    }
-    .panel-meta {
-      margin-left: auto;
-      font-family: 'Space Mono', monospace;
-      font-size: 10px;
-      color: var(--text-dim);
-    }
+    .panel-icon { font-family: 'VT323', monospace; font-size: 22px; color: var(--cyan); text-shadow: 0 0 9px var(--cyan-glow); }
+    .panel-title { font-family: 'Press Start 2P', monospace; font-size: 11px; color: var(--cyan); text-shadow: 0 0 8px rgba(0,255,255,0.33); letter-spacing: 1px; }
+    .panel-meta { margin-left: auto; font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-dim); }
 
-    /* ── TONIGHT'S 3 SLOTS ── */
+    /* ── TONIGHT'S 3 ── */
     .tonight-slot {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 13px;
-      margin-bottom: 7px;
-      border-radius: 2px;
-      min-height: 44px;
-      transition: box-shadow 0.3s;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 13px; margin-bottom: 7px;
+      border-radius: 2px; min-height: 44px; transition: box-shadow 0.3s;
     }
     .tonight-slot:last-child { margin-bottom: 0; }
     .tonight-slot.filled {
-      background: rgba(0, 255, 255, 0.035);
-      border: 1px solid rgba(0, 255, 255, 0.34);
+      background: rgba(0,255,255,0.035);
+      border: 1px solid rgba(0,255,255,0.34);
       animation: spulse 4s ease-in-out infinite;
     }
-    .tonight-slot.empty {
-      border: 1px dashed rgba(0, 255, 255, 0.11);
-    }
-    @keyframes spulse {
-      0%,100% { box-shadow: 0 0 8px rgba(0,255,255,0.06); }
-      50%      { box-shadow: 0 0 18px rgba(0,255,255,0.16); }
-    }
+    .tonight-slot.empty { border: 1px dashed rgba(0,255,255,0.11); }
+    @keyframes spulse { 0%,100%{box-shadow:0 0 8px rgba(0,255,255,0.06)} 50%{box-shadow:0 0 18px rgba(0,255,255,0.16)} }
 
-    .slot-num {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 8px;
-      color: rgba(0, 255, 255, 0.38);
-      width: 18px;
-      flex-shrink: 0;
-    }
+    .slot-num { font-family: 'Press Start 2P', monospace; font-size: 8px; color: rgba(0,255,255,0.38); width: 18px; flex-shrink: 0; }
     .slot-chk {
-      width: 17px; height: 17px;
-      border: 1.5px solid rgba(0, 255, 255, 0.33);
-      border-radius: 2px;
-      flex-shrink: 0;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'VT323', monospace;
-      font-size: 13px;
-      color: transparent;
+      width: 17px; height: 17px; border: 1.5px solid rgba(0,255,255,0.33);
+      border-radius: 2px; flex-shrink: 0; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'VT323', monospace; font-size: 13px; color: transparent;
       transition: all 0.15s;
     }
     .slot-chk:hover { border-color: var(--cyan); }
     .slot-chk.on { background: rgba(0,255,255,0.18); border-color: var(--cyan); color: var(--cyan); }
-
-    .slot-text {
-      flex: 1;
-      font-family: 'Space Mono', monospace;
-      font-size: 13px;
-      color: rgba(0, 255, 255, 0.9);
-      text-shadow: 0 0 8px rgba(0,255,255,0.18);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+    .slot-text { flex: 1; font-family: 'Space Mono', monospace; font-size: 13px; color: rgba(0,255,255,0.9); text-shadow: 0 0 8px rgba(0,255,255,0.18); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .slot-text.ph { font-style: italic; color: rgba(0,255,255,0.18); text-shadow: none; font-size: 11px; }
     .slot-text.crossed { text-decoration: line-through; opacity: 0.38; text-shadow: none; }
-
-    .slot-rm {
-      background: none; border: none; cursor: pointer;
-      font-family: 'VT323', monospace; font-size: 19px;
-      color: rgba(0,255,255,0.22); padding: 0 3px; line-height: 1;
-      transition: all 0.15s; flex-shrink: 0;
-    }
+    .slot-rm { background: none; border: none; cursor: pointer; font-family: 'VT323', monospace; font-size: 19px; color: rgba(0,255,255,0.22); padding: 0 3px; line-height: 1; transition: all 0.15s; flex-shrink: 0; }
     .slot-rm:hover { color: var(--magenta); text-shadow: 0 0 9px rgba(255,0,255,0.55); }
 
     /* ── ADD ROW ── */
     .add-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-      padding: 9px 13px;
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 16px; padding: 9px 13px;
       background: rgba(0,0,0,0.55);
-      border: 1px solid rgba(0, 255, 65, 0.33);
-      border-radius: 2px;
+      border: 1px solid rgba(0,255,65,0.33); border-radius: 2px;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .add-row:focus-within {
-      border-color: rgba(0, 255, 65, 0.62);
-      box-shadow: 0 0 14px rgba(0,255,65,0.09);
-    }
-    .prompt {
-      font-family: 'VT323', monospace;
-      font-size: 20px;
-      color: var(--green);
-      text-shadow: 0 0 8px rgba(0,255,65,0.55);
-      flex-shrink: 0; line-height: 1;
-    }
-    #task-input {
-      flex: 1;
-      background: none; border: none; outline: none;
-      font-family: 'Space Mono', monospace;
-      font-size: 13px;
-      color: var(--green);
-      caret-color: var(--green);
-    }
+    .add-row:focus-within { border-color: rgba(0,255,65,0.62); box-shadow: 0 0 14px rgba(0,255,65,0.09); }
+    .prompt { font-family: 'VT323', monospace; font-size: 20px; color: var(--green); text-shadow: 0 0 8px rgba(0,255,65,0.55); flex-shrink: 0; line-height: 1; }
+    #task-input { flex: 1; background: none; border: none; outline: none; font-family: 'Space Mono', monospace; font-size: 13px; color: var(--green); caret-color: var(--green); }
     #task-input::placeholder { color: rgba(0,255,65,0.24); font-size: 11px; }
-
-    #add-btn {
-      background: transparent;
-      border: 1px solid rgba(0,255,65,0.42);
-      color: var(--green);
-      font-family: 'Press Start 2P', monospace;
-      font-size: 8px;
-      padding: 7px 11px;
-      cursor: pointer;
-      letter-spacing: 1px;
-      border-radius: 2px;
-      transition: all 0.15s;
-      text-shadow: 0 0 6px rgba(0,255,65,0.38);
-    }
+    #add-btn { background: transparent; border: 1px solid rgba(0,255,65,0.42); color: var(--green); font-family: 'Press Start 2P', monospace; font-size: 8px; padding: 7px 11px; cursor: pointer; letter-spacing: 1px; border-radius: 2px; transition: all 0.15s; text-shadow: 0 0 6px rgba(0,255,65,0.38); }
     #add-btn:hover { background: rgba(0,255,65,0.08); box-shadow: 0 0 12px rgba(0,255,65,0.2); }
     #add-btn:active { transform: scale(0.95); }
 
     /* ── TASK ITEMS ── */
     .task-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 13px;
-      margin-bottom: 6px;
-      border: 1px solid rgba(184,184,204,0.07);
-      border-radius: 2px;
-      background: rgba(0,0,0,0.25);
-      transition: all 0.15s;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 13px; margin-bottom: 6px;
+      border: 1px solid rgba(184,184,204,0.07); border-radius: 2px;
+      background: rgba(0,0,0,0.25); transition: all 0.15s;
       animation: slidein 0.2s ease both;
     }
-    @keyframes slidein {
-      from { opacity: 0; transform: translateX(-7px); }
-      to   { opacity: 1; transform: none; }
-    }
-    .task-item:hover {
-      border-color: rgba(0,255,255,0.17);
-      background: rgba(0,255,255,0.022);
-    }
-    .task-item.pinned {
-      border-color: rgba(0,255,255,0.28);
-      background: rgba(0,255,255,0.03);
-    }
-    .task-item.done {
-      opacity: 0.3;
-    }
-
-    .task-chk {
-      width: 18px; height: 18px;
-      border: 1.5px solid rgba(184,184,204,0.28);
-      border-radius: 2px; flex-shrink: 0;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'VT323', monospace;
-      font-size: 13px; color: transparent;
-      transition: all 0.15s;
-    }
+    @keyframes slidein { from{opacity:0;transform:translateX(-7px)} to{opacity:1;transform:none} }
+    .task-item:hover { border-color: rgba(0,255,255,0.17); background: rgba(0,255,255,0.022); }
+    .task-item.pinned { border-color: rgba(0,255,255,0.28); background: rgba(0,255,255,0.03); }
+    .task-item.done { opacity: 0.3; }
+    .task-chk { width: 18px; height: 18px; border: 1.5px solid rgba(184,184,204,0.28); border-radius: 2px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: 'VT323', monospace; font-size: 13px; color: transparent; transition: all 0.15s; }
     .task-chk:hover { border-color: var(--cyan); }
-    .task-item.done .task-chk {
-      background: rgba(0,255,255,0.15);
-      border-color: rgba(0,255,255,0.5);
-      color: var(--cyan);
-    }
-
-    .task-text {
-      flex: 1;
-      font-family: 'Space Mono', monospace;
-      font-size: 13px; color: var(--text);
-      line-height: 1.4; min-width: 0;
-    }
+    .task-item.done .task-chk { background: rgba(0,255,255,0.15); border-color: rgba(0,255,255,0.5); color: var(--cyan); }
+    .task-text { flex: 1; font-family: 'Space Mono', monospace; font-size: 13px; color: var(--text); line-height: 1.4; min-width: 0; }
     .task-item.done .task-text { text-decoration: line-through; }
     .task-item.pinned .task-text { color: rgba(0,255,255,0.82); }
-
-    .task-pin, .task-del {
-      background: none; border: none; cursor: pointer;
-      font-family: 'VT323', monospace;
-      font-size: 18px; padding: 0 3px;
-      line-height: 1; flex-shrink: 0;
-      opacity: 0; transition: all 0.15s;
-    }
-    .task-item:hover .task-pin,
-    .task-item:hover .task-del,
-    .task-item.pinned .task-pin { opacity: 1; }
-
+    .task-pin, .task-del { background: none; border: none; cursor: pointer; font-family: 'VT323', monospace; font-size: 18px; padding: 0 3px; line-height: 1; flex-shrink: 0; opacity: 0; transition: all 0.15s; }
+    .task-item:hover .task-pin, .task-item:hover .task-del, .task-item.pinned .task-pin { opacity: 1; }
     .task-pin { color: rgba(184,184,204,0.3); }
     .task-item.pinned .task-pin { color: var(--cyan); text-shadow: 0 0 6px rgba(0,255,255,0.5); }
     .task-pin:hover { color: var(--cyan) !important; text-shadow: 0 0 9px var(--cyan-glow); }
-
     .task-del { color: rgba(184,184,204,0.3); }
     .task-del:hover { color: var(--magenta); text-shadow: 0 0 9px rgba(255,0,255,0.5); }
 
-    /* ── DIVIDER ── */
-    .done-div {
-      border: none;
-      border-top: 1px dashed rgba(184,184,204,0.07);
-      margin: 12px 0;
-    }
+    .done-div { border: none; border-top: 1px dashed rgba(184,184,204,0.07); margin: 12px 0; }
+    .empty-msg { font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(184,184,204,0.22); text-align: center; padding: 24px 0; font-style: italic; }
 
-    /* ── EMPTY ── */
-    .empty-msg {
-      font-family: 'Space Mono', monospace;
-      font-size: 11px;
-      color: rgba(184,184,204,0.22);
-      text-align: center;
-      padding: 24px 0;
-      font-style: italic;
+    /* ── QUICK LINKS ── */
+    .link-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 13px; margin-bottom: 6px;
+      border: 1px solid rgba(184,184,204,0.07); border-radius: 2px;
+      background: rgba(0,0,0,0.2);
+      text-decoration: none; transition: all 0.15s;
     }
+    .link-row:last-child { margin-bottom: 0; }
+    .link-row:hover { border-color: rgba(0,255,255,0.2); background: rgba(0,255,255,0.025); }
+    .link-prompt { font-family: 'VT323', monospace; font-size: 18px; color: var(--green); text-shadow: 0 0 6px rgba(0,255,65,0.4); flex-shrink: 0; line-height: 1; }
+    .link-name { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .link-url { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--text-dim); flex: 1.5; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: none; }
+    .link-row:hover .link-url { display: block; }
+    .link-row:hover .link-name { display: none; }
+    .link-badge {
+      font-family: 'Press Start 2P', monospace; font-size: 7px;
+      padding: 3px 7px; border-radius: 2px; flex-shrink: 0;
+    }
+    .link-badge.live { color: var(--green); border: 1px solid rgba(0,255,65,0.35); background: rgba(0,255,65,0.07); text-shadow: 0 0 5px rgba(0,255,65,0.4); }
+    .link-badge.local { color: rgba(0,170,255,0.9); border: 1px solid rgba(0,170,255,0.25); background: rgba(0,170,255,0.06); }
+    .link-badge.dev { color: rgba(255,165,0,0.9); border: 1px solid rgba(255,165,0,0.25); background: rgba(255,165,0,0.06); }
 
     /* ── FOOTER ── */
-    .footer {
-      text-align: center;
-      padding: 22px 0 0;
-      font-family: 'VT323', monospace;
-      font-size: 14px;
-      color: rgba(0,255,255,0.18);
-      letter-spacing: 2px;
-    }
+    .footer { text-align: center; padding: 22px 0 0; font-family: 'VT323', monospace; font-size: 14px; color: rgba(0,255,255,0.18); letter-spacing: 2px; }
 
     /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 4px; }
@@ -369,11 +235,12 @@
     /* ── MOBILE ── */
     @media (max-width: 600px) {
       .app { padding: 14px 12px 60px; }
-      .tb-title { font-size: 18px; letter-spacing: 2px; }
+      .tb-title { font-size: 20px; letter-spacing: 2px; }
       .panel-title { font-size: 9px; }
       .task-text, .slot-text { font-size: 12px; }
       .task-pin, .task-del { opacity: 1; }
       #task-input { font-size: 12px; }
+      .ss-chip { font-size: 14px; padding: 4px 9px; }
     }
   </style>
 </head>
@@ -385,14 +252,26 @@
 
 <div class="app">
 
+  <!-- Titlebar -->
   <div class="titlebar">
     <div class="tb-dots">
       <span class="tb-dot cl"></span>
       <span class="tb-dot mn"></span>
       <span class="tb-dot mx"></span>
     </div>
-    <div class="tb-title">ROB'S COMMAND CENTER<span class="cur">_</span></div>
+    <div class="tb-title">ROB.EXE<span class="cur">_</span></div>
     <div class="tb-clock" id="clock">12:00 AM</div>
+  </div>
+
+  <!-- Status Strip -->
+  <div class="status-strip">
+    <div class="ss-chip" id="ss-date">— — —</div>
+    <div class="ss-chip" id="ss-tasks">TASKS: —</div>
+    <div class="ss-chip" id="ss-pinned">PINNED: —</div>
+    <div class="ss-chip accent">
+      <span class="ss-dot"></span>
+      ONLINE
+    </div>
   </div>
 
   <!-- Tonight's 3 -->
@@ -420,7 +299,54 @@
     <div id="task-list"></div>
   </div>
 
-  <div class="footer">[ ROB-CC v2.0 // NEON BUILD // ONLINE ]</div>
+  <!-- Quick Links -->
+  <div class="panel">
+    <div class="panel-hd">
+      <span class="panel-icon">/</span>
+      <span class="panel-title">QUICK LINKS</span>
+      <span class="panel-meta">// LIVE SYSTEMS</span>
+    </div>
+    <div id="links-list">
+      <a class="link-row" href="https://williamssystems.shop" target="_blank" rel="noopener">
+        <span class="link-prompt">&gt;</span>
+        <span class="link-name">Williams Systems</span>
+        <span class="link-url">williamssystems.shop</span>
+        <span class="link-badge live">LIVE</span>
+      </a>
+      <a class="link-row" href="https://youtube-automation-woad.vercel.app" target="_blank" rel="noopener">
+        <span class="link-prompt">&gt;</span>
+        <span class="link-name">AutoTube</span>
+        <span class="link-url">youtube-automation-woad.vercel.app</span>
+        <span class="link-badge live">LIVE</span>
+      </a>
+      <a class="link-row" href="https://streambridge-eight.vercel.app" target="_blank" rel="noopener">
+        <span class="link-prompt">&gt;</span>
+        <span class="link-name">StreamBridge</span>
+        <span class="link-url">streambridge-eight.vercel.app</span>
+        <span class="link-badge live">LIVE</span>
+      </a>
+      <a class="link-row" href="https://trade-tracker-omega.vercel.app" target="_blank" rel="noopener">
+        <span class="link-prompt">&gt;</span>
+        <span class="link-name">Trade Tracker</span>
+        <span class="link-url">trade-tracker-omega.vercel.app</span>
+        <span class="link-badge live">LIVE</span>
+      </a>
+      <a class="link-row" href="https://rob-dashboard-sandy.vercel.app" target="_blank" rel="noopener">
+        <span class="link-prompt">&gt;</span>
+        <span class="link-name">Rob Dashboard</span>
+        <span class="link-url">rob-dashboard-sandy.vercel.app</span>
+        <span class="link-badge live">LIVE</span>
+      </a>
+      <a class="link-row" href="#" onclick="return false;">
+        <span class="link-prompt">&gt;</span>
+        <span class="link-name">LandlordCRM</span>
+        <span class="link-url">localhost:3000</span>
+        <span class="link-badge local">LOCAL</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="footer">[ ROB.EXE // NEON BUILD // ONLINE ]</div>
 
 </div>
 
@@ -437,29 +363,26 @@
   camera.position.z = 0;
 
   const N = 1200;
-  const pos   = new Float32Array(N * 3);
-  const col   = new Float32Array(N * 3);
-  const spd   = new Float32Array(N);
+  const pos = new Float32Array(N * 3);
+  const col = new Float32Array(N * 3);
+  const spd = new Float32Array(N);
 
   function initStar(i, scatter) {
     const r = Math.pow(Math.random(), 0.45) * 680;
     const a = Math.random() * Math.PI * 2;
     pos[i*3]   = Math.cos(a) * r;
     pos[i*3+1] = Math.sin(a) * r;
-    pos[i*3+2] = scatter
-      ? -(Math.random() * 3600 + 200)   // full spread on init
-      : -(Math.random() * 500  + 3200); // far spawn on reset
+    pos[i*3+2] = scatter ? -(Math.random() * 3600 + 200) : -(Math.random() * 500 + 3200);
     spd[i] = Math.random() * 5 + 2;
-
     const t = Math.random();
-    if (t < 0.55) {                          // cyan
+    if (t < 0.55) {
       col[i*3]=0; col[i*3+1]=0.87+Math.random()*0.13; col[i*3+2]=0.92+Math.random()*0.08;
-    } else if (t < 0.82) {                   // blue-white
+    } else if (t < 0.82) {
       const w = 0.82 + Math.random() * 0.18;
       col[i*3]=w*0.8; col[i*3+1]=w*0.88; col[i*3+2]=w;
-    } else if (t < 0.94) {                   // electric blue
+    } else if (t < 0.94) {
       col[i*3]=0; col[i*3+1]=0.35+Math.random()*0.3; col[i*3+2]=1;
-    } else {                                  // magenta accent
+    } else {
       col[i*3]=1; col[i*3+1]=0.04; col[i*3+2]=0.92+Math.random()*0.08;
     }
   }
@@ -471,11 +394,9 @@
   geo.setAttribute('color',    new THREE.BufferAttribute(col, 3));
 
   const mat = new THREE.PointsMaterial({
-    size: 2.8, sizeAttenuation: true,
-    vertexColors: true,
+    size: 2.8, sizeAttenuation: true, vertexColors: true,
     transparent: true, opacity: 0.88,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
+    blending: THREE.AdditiveBlending, depthWrite: false,
   });
 
   scene.add(new THREE.Points(geo, mat));
@@ -498,7 +419,10 @@
   });
 })();
 
-// ─── CLOCK ──────────────────────────────────────────
+// ─── CLOCK & DATE ────────────────────────────────────
+const DAYS  = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
 function tick() {
   const n = new Date(), h = n.getHours(), m = n.getMinutes();
   const ap = h >= 12 ? 'PM' : 'AM', hh = h % 12 || 12;
@@ -525,15 +449,13 @@ function esc(s) {
 function getPinned() {
   return S.tasks.filter(t => t.pinned).sort((a,b) => (a.pa||0) - (b.pa||0));
 }
-
 function togglePin(id) {
   const t = S.tasks.find(t => t.id === id);
   if (!t) return;
-  if (t.pinned) {
-    t.pinned = false; t.pa = 0;
-  } else {
+  if (t.pinned) { t.pinned = false; t.pa = 0; }
+  else {
     const p = getPinned();
-    if (p.length >= 3) { p[0].pinned = false; p[0].pa = 0; } // evict oldest
+    if (p.length >= 3) { p[0].pinned = false; p[0].pa = 0; }
     t.pinned = true; t.pa = Date.now();
   }
   save(); render();
@@ -549,13 +471,22 @@ function deleteTask(id) {
   save(); render();
 }
 function addTask(text) {
-  const v = text.trim();
-  if (!v) return;
+  const v = text.trim(); if (!v) return;
   S.tasks.unshift({ id: Date.now(), text: v, done: false, pinned: false, pa: 0 });
   save(); render();
 }
 
 // ─── RENDER ─────────────────────────────────────────
+function renderStatus() {
+  const n = new Date();
+  document.getElementById('ss-date').textContent =
+    DAYS[n.getDay()] + ' · ' + MONTHS[n.getMonth()] + ' ' + String(n.getDate()).padStart(2,'0');
+  const active = S.tasks.filter(t => !t.done).length;
+  const done   = S.tasks.filter(t =>  t.done).length;
+  document.getElementById('ss-tasks').textContent  = `TASKS: ${active} ACTIVE · ${done} DONE`;
+  document.getElementById('ss-pinned').textContent = `PINNED: ${getPinned().length}/3`;
+}
+
 function renderTonight() {
   const pinned = getPinned();
   let html = '';
@@ -603,7 +534,7 @@ function taskHTML(t) {
   </div>`;
 }
 
-function render() { renderTonight(); renderTasks(); }
+function render() { renderStatus(); renderTonight(); renderTasks(); }
 
 // ─── INPUT ───────────────────────────────────────────
 document.getElementById('add-btn').addEventListener('click', () => {
