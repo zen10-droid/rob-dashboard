@@ -123,20 +123,6 @@
     .done-div { border: none; border-top: 1px dashed rgba(184,184,204,0.07); margin: 12px 0; }
     .empty-msg { font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(184,184,204,0.22); text-align: center; padding: 24px 0; font-style: italic; }
 
-    /* ── SCRATCHPAD ── */
-    .notes-area {
-      width: 100%; min-height: 160px;
-      background: rgba(0,0,0,0.5);
-      border: 1px solid rgba(0,255,65,0.22); border-radius: 2px;
-      padding: 12px 13px;
-      font-family: 'Space Mono', monospace; font-size: 12px;
-      color: rgba(0,255,65,0.88); caret-color: var(--green);
-      resize: vertical; outline: none; line-height: 1.75;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .notes-area:focus { border-color: rgba(0,255,65,0.48); box-shadow: 0 0 12px rgba(0,255,65,0.06); }
-    .notes-area::placeholder { color: rgba(0,255,65,0.2); font-size: 11px; }
-
     /* ── QUICK LINKS ── */
     .link-row { display: flex; align-items: center; gap: 10px; padding: 9px 13px; margin-bottom: 6px; border: 1px solid rgba(184,184,204,0.07); border-radius: 2px; background: rgba(0,0,0,0.2); text-decoration: none; transition: all 0.15s; }
     .link-row:last-child { margin-bottom: 0; }
@@ -223,16 +209,6 @@
       <button id="add-btn">ADD</button>
     </div>
     <div id="task-list"></div>
-  </div>
-
-  <!-- Scratchpad -->
-  <div class="panel">
-    <div class="panel-hd">
-      <span class="panel-icon">//</span>
-      <span class="panel-title">SCRATCHPAD</span>
-      <span class="panel-meta">// NOTES</span>
-    </div>
-    <textarea class="notes-area" id="notes-area" placeholder="C:\NOTES> type anything here — syncs across all devices..."></textarea>
   </div>
 
   <!-- Quick Links -->
@@ -401,18 +377,6 @@ function addTask(text){
   save();render();
 }
 
-// ─── NOTES ───────────────────────────────────────────
-let notesTimer = null;
-document.addEventListener('DOMContentLoaded', () => {
-  const el = document.getElementById('notes-area');
-  el.addEventListener('input', () => {
-    S.notes = el.value;
-    saveLocal();
-    clearTimeout(notesTimer);
-    notesTimer = setTimeout(() => saveCloud(), 1500);
-  });
-});
-
 // ─── RENDER ─────────────────────────────────────────
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -450,12 +414,7 @@ function taskHTML(t){
   return `<div class="task-item${t.done?' done':''}${t.pinned?' pinned':''}" id="ti-${t.id}"><div class="task-chk" onclick="toggleDone(${t.id})">${t.done?'✓':''}</div><span class="task-text">${esc(t.text)}</span><button class="task-pin" onclick="togglePin(${t.id})" title="${t.pinned?'Unpin':'Pin to Tonight\'s 3'}">★</button><button class="task-del" onclick="deleteTask(${t.id})" title="Delete">✕</button></div>`;
 }
 
-function renderNotes() {
-  const el=document.getElementById('notes-area');
-  if(el&&document.activeElement!==el) el.value=S.notes||'';
-}
-
-function render(){renderStatus();renderTonight();renderTasks();renderNotes();}
+function render(){renderStatus();renderTonight();renderTasks();}
 
 // ─── INPUT ───────────────────────────────────────────
 document.getElementById('add-btn').addEventListener('click',()=>{
